@@ -250,6 +250,22 @@
     font-family: "IBM Plex Mono", monospace;
   }
   .pron-box strong { font-weight: 700; }
+
+  .rule-card h2 { margin-bottom: 10px; }
+  .rule-formula {
+    font-family: "IBM Plex Mono", monospace;
+    font-size: 0.88rem;
+    color: var(--teal);
+    background: var(--teal-tint);
+    border-radius: 8px;
+    padding: 10px 14px;
+    margin-bottom: 12px;
+    line-height: 1.5;
+  }
+  .rule-use { color: var(--muted); margin: 0 0 12px; line-height: 1.5; }
+  .rule-examples { margin: 0; padding-left: 20px; }
+  .rule-examples li { color: var(--ink); margin-bottom: 4px; line-height: 1.5; }
+  .rule-examples li:last-child { margin-bottom: 0; }
   .flashcard .example-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; max-width: 44ch; }
   .flashcard .example { color: var(--muted); font-size: 0.95rem; }
   .flashcard .hint { color: var(--muted); font-size: 0.78rem; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.06em; }
@@ -433,6 +449,7 @@
       <a href="#/home" data-route="home">Inicio</a>
       <a href="#/flashcards" data-route="flashcards">Vocabulario</a>
       <a href="#/grammar" data-route="grammar">Gramática</a>
+      <a href="#/rules" data-route="rules">Reglas</a>
       <a href="#/progress" data-route="progress">Progreso</a>
     </nav>
     <div class="profile-chip" id="profile-chip" hidden></div>
@@ -818,6 +835,68 @@ const GRAMMAR = {
   ],
 };
 
+const GRAMMAR_RULES = {
+  A1: [
+    { title: "Verbo \"to be\" (am / is / are)", formula: "I am · You/We/They are · He/She/It is", use: "Para decir quién eres, cómo estás o de dónde eres.", examples: ["I am a student.", "She is happy.", "They are from Peru."] },
+    { title: "Presente simple (afirmativo)", formula: "Sujeto + verbo (+s en 3ª persona)", use: "Acciones habituales o hechos generales.", examples: ["I work every day.", "She works at a bank.", "They live in Lima."] },
+    { title: "Presente simple (negativo y preguntas)", formula: "don't/doesn't + verbo base · Do/Does + sujeto + verbo?", use: "Negar o preguntar sobre hábitos y hechos.", examples: ["I don't like coffee.", "Does he speak English?", "They don't have a car."] },
+    { title: "Artículos \"a\" / \"an\"", formula: "a + sonido consonante · an + sonido vocálico", use: "Introducir un sustantivo singular contable.", examples: ["a book", "an apple", "a university (suena 'iu-')"] },
+    { title: "Adjetivos posesivos", formula: "my, your, his, her, its, our, their + sustantivo", use: "Indicar de quién es algo.", examples: ["This is my house.", "Is that your car?", "Their dog is small."] },
+    { title: "There is / There are", formula: "There is + singular · There are + plural", use: "Decir que algo existe o está en un lugar.", examples: ["There is a cat on the bed.", "There are two books on the table."] },
+    { title: "Can (habilidad y permiso)", formula: "can + verbo base", use: "Expresar habilidad o pedir permiso.", examples: ["I can swim.", "Can I open the window?", "She can't drive."] },
+    { title: "Presente continuo", formula: "am/is/are + verbo-ing", use: "Acciones que están pasando ahora mismo.", examples: ["I am reading.", "She is cooking dinner.", "We are playing football."] },
+  ],
+  A2: [
+    { title: "Pasado simple (verbos regulares)", formula: "verbo + ed", use: "Acciones terminadas en el pasado.", examples: ["I worked yesterday.", "She cleaned the house.", "They watched a movie."] },
+    { title: "Pasado simple (verbos irregulares)", formula: "forma irregular: go→went, have→had, see→saw...", use: "Mismo uso que el pasado regular, pero con verbos que no siguen la regla del '-ed'.", examples: ["I went to the park.", "We had a great time.", "She saw her friend."] },
+    { title: "Pasado simple (negativo y preguntas)", formula: "didn't + verbo base · Did + sujeto + verbo?", use: "Negar o preguntar sobre el pasado.", examples: ["I didn't go to school.", "Did you see the movie?"] },
+    { title: "Pasado continuo", formula: "was/were + verbo-ing", use: "Una acción en progreso en el pasado, a veces interrumpida.", examples: ["I was sleeping when you called.", "They were watching TV at 8pm."] },
+    { title: "Comparativos y superlativos", formula: "adjetivo+er / more + adjetivo · the + adjetivo+est / the most + adjetivo", use: "Comparar dos o más cosas.", examples: ["She is taller than me.", "This is the best restaurant in town."] },
+    { title: "Some / Any", formula: "some → afirmativas y ofertas · any → negativas y preguntas", use: "Hablar de cantidades indefinidas.", examples: ["I have some money.", "Do you have any questions?", "Would you like some tea?"] },
+    { title: "Countable / Uncountable (much / many)", formula: "How many + contable · How much + incontable", use: "Preguntar o hablar de cantidad.", examples: ["How many apples do you have?", "How much water do you need?"] },
+    { title: "Presente perfecto (introducción)", formula: "have/has + participio", use: "Experiencias de vida, sin decir cuándo exactamente.", examples: ["I have visited Paris.", "She has never eaten sushi."] },
+  ],
+  B1: [
+    { title: "Primer condicional", formula: "If + presente, will + verbo", use: "Situaciones futuras reales y posibles.", examples: ["If it rains, I will stay home.", "If you study, you will pass."] },
+    { title: "Segundo condicional", formula: "If + pasado simple, would + verbo", use: "Situaciones hipotéticas o poco probables.", examples: ["If I were rich, I would travel the world.", "If she asked, I would help her."] },
+    { title: "Presente perfecto continuo", formula: "have/has been + verbo-ing", use: "Una acción que empezó en el pasado y sigue ahora, o cuyo efecto se nota ahora.", examples: ["I have been studying for two hours.", "It has been raining all day."] },
+    { title: "Pasado perfecto", formula: "had + participio", use: "Una acción pasada que ocurrió antes que otra acción pasada.", examples: ["She had already left when I arrived.", "By 8pm, we had finished dinner."] },
+    { title: "Voz pasiva (pasado)", formula: "was/were + participio", use: "Cuando importa más la acción que quién la hizo.", examples: ["The letter was written by John.", "The windows were broken."] },
+    { title: "Modales de deducción (must / might / can't)", formula: "must / might / can't + verbo base", use: "Hacer suposiciones lógicas sobre el presente.", examples: ["He must be tired.", "She might be at home.", "That can't be true."] },
+    { title: "Cláusulas relativas (who / which / whose)", formula: "who → personas · which → cosas · whose → posesión", use: "Dar más información sobre un sustantivo.", examples: ["The man who called you is my uncle.", "This is the book which I told you about."] },
+    { title: "Used to", formula: "used to + verbo base", use: "Hábitos o estados pasados que ya no ocurren.", examples: ["I used to play football.", "She used to live in Madrid."] },
+  ],
+  B2: [
+    { title: "Tercer condicional", formula: "If + past perfect, would have + participio", use: "Situaciones hipotéticas del pasado que no ocurrieron.", examples: ["If I had studied, I would have passed.", "If she had known, she would have called."] },
+    { title: "Condicional mixto", formula: "If + past perfect, would + verbo base (condición pasada, resultado presente)", use: "Mezclar un tiempo en la condición y otro en el resultado.", examples: ["If she had studied harder, she would have a better job now."] },
+    { title: "Voz pasiva con modales", formula: "modal + be + participio", use: "Expresar obligación, posibilidad, etc. en pasiva.", examples: ["The report must be finished by Friday.", "This problem can be solved."] },
+    { title: "Wish + would / had", formula: "wish + would (fastidio) · wish + had (arrepentimiento pasado)", use: "Expresar deseos o quejas.", examples: ["I wish you would listen to me.", "I wish I had known earlier."] },
+    { title: "Estructura causativa (have/get something done)", formula: "have/get + objeto + participio", use: "Decir que otra persona hace algo por ti.", examples: ["I had my car repaired.", "She got her hair cut."] },
+    { title: "Estilo indirecto (reported speech)", formula: "el tiempo verbal retrocede un paso (will→would, is→was...)", use: "Contar lo que alguien dijo.", examples: ["He said he would call me.", "She said she was tired."] },
+    { title: "Futuro perfecto", formula: "will have + participio", use: "Una acción que estará terminada antes de un momento futuro.", examples: ["By 2030, I will have graduated.", "She will have finished by noon."] },
+    { title: "Inversión con \"Not only\"", formula: "Not only + auxiliar + sujeto...", use: "Dar énfasis empezando la oración con una frase negativa.", examples: ["Not only was he late, but he also forgot the keys."] },
+  ],
+  C1: [
+    { title: "Inversión con adverbios negativos", formula: "Rarely/Never/No sooner + auxiliar + sujeto...", use: "Dar énfasis formal a una oración negativa o restrictiva.", examples: ["Rarely have I seen such dedication.", "No sooner had I arrived than it started to rain."] },
+    { title: "Oraciones hendidas (cleft sentences)", formula: "It is/was + elemento enfatizado + that...", use: "Resaltar una parte específica de la oración.", examples: ["It is the cost that worries me the most."] },
+    { title: "Subjuntivo", formula: "verbo base sin conjugar tras essential/suggest/insist/recommend that", use: "Expresar recomendaciones o necesidades de forma formal.", examples: ["It's essential that he be on time.", "She suggested that he arrive early."] },
+    { title: "Cláusulas de participio", formula: "verbo-ing / participio al inicio de la oración", use: "Dar una razón o acción simultánea de forma concisa.", examples: ["Feeling tired, she went to bed early.", "Having finished her work, she left."] },
+    { title: "Do enfático", formula: "do/does/did + verbo base", use: "Añadir énfasis a una afirmación.", examples: ["I do agree with you.", "She does try her best."] },
+    { title: "Estructuras pasivas de reporte", formula: "It is said/believed/thought + that...", use: "Reportar una opinión general sin decir quién la tiene.", examples: ["It is believed that the economy will improve."] },
+    { title: "Conectores formales de concesión", formula: "Despite + sustantivo/gerundio · adjetivo + as + sujeto + verbo", use: "Expresar 'aunque' en un registro más formal.", examples: ["Despite the delay, the project succeeded.", "Tired as she was, she kept working."] },
+  ],
+  C2: [
+    { title: "Inversión avanzada", formula: "Hardly/Scarcely + had + sujeto...when · Not until + auxiliar + sujeto", use: "Registro muy formal y literario para secuencias de eventos.", examples: ["Hardly had the show begun when the power went out.", "Not until she left did he realize how much he cared."] },
+    { title: "Nominalización", formula: "convertir el verbo en sustantivo: reject → rejection", use: "Registro académico/formal típico de informes y ensayos.", examples: ["The committee's rejection of the proposal was unexpected."] },
+    { title: "Subjuntivo formal", formula: "insist/demand/require that + sujeto + verbo base", use: "Exigir o insistir de forma muy formal.", examples: ["The board insists that the report be submitted by Friday."] },
+    { title: "Fronting enfático (Such...that)", formula: "Such + was/were + sustantivo + that...", use: "Enfatizar el grado o intensidad de algo.", examples: ["Such was the impact of the speech that the audience stood in silence."] },
+    { title: "Estructuras elípticas", formula: "and so + auxiliar + sujeto (evita repetir el verbo)", use: "Evitar la repetición en un registro elegante.", examples: ["He said he'd help, and so he did."] },
+    { title: "Concesión formal (Much as)", formula: "Much as + sujeto + verbo, ...", use: "Decir 'aunque... mucho' de forma muy formal.", examples: ["Much as I admire her work, I disagree with her methods."] },
+    { title: "Pasiva de reporte con infinitivo perfecto", formula: "is alleged/said/believed + to have + participio", use: "Reportar formalmente algo que pasó antes.", examples: ["The suspect is alleged to have entered the building that night."] },
+    { title: "Registro formal (do not / should)", formula: "Should + sujeto + verbo base, do not hesitate...", use: "Instrucciones o cartas muy formales.", examples: ["Should you require further assistance, do not hesitate to contact us."] },
+  ],
+};
+
 const STORAGE_KEY = "fluentup_progress_v1";
 const DAY_MS = 24 * 60 * 60 * 1000;
 
@@ -1109,7 +1188,7 @@ function grammarAccuracy(level) {
   return Math.round((g.correct / g.total) * 100);
 }
 
-const routes = { home: renderHome, flashcards: renderFlashcards, grammar: renderGrammar, progress: renderProgress };
+const routes = { home: renderHome, flashcards: renderFlashcards, grammar: renderGrammar, rules: renderRules, progress: renderProgress };
 
 function router() {
   const hash = location.hash.replace("#/", "") || "home";
@@ -1473,6 +1552,36 @@ function renderGrammar(app) {
 
   draw();
   wrap.appendChild(body);
+  app.appendChild(wrap);
+}
+
+function renderRules(app) {
+  const level = state.selectedLevel;
+  const rules = GRAMMAR_RULES[level] || [];
+
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `<h1>Reglas de gramática · ${level}</h1><p class="subtitle">Repasa la teoría antes (o después) de practicar en Gramática.</p>`;
+
+  if (rules.length === 0) {
+    wrap.innerHTML += `<div class="empty-state">No hay reglas para este nivel todavía.</div>`;
+    app.appendChild(wrap);
+    return;
+  }
+
+  rules.forEach((rule) => {
+    const card = document.createElement("div");
+    card.className = "card rule-card";
+    card.innerHTML = `
+      <h2>${rule.title}</h2>
+      <div class="rule-formula">${rule.formula}</div>
+      <p class="rule-use">${rule.use}</p>
+      <ul class="rule-examples">
+        ${rule.examples.map((ex) => `<li>${ex}</li>`).join("")}
+      </ul>
+    `;
+    wrap.appendChild(card);
+  });
+
   app.appendChild(wrap);
 }
 
