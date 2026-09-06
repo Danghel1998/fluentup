@@ -357,6 +357,26 @@
     line-height: 1.5;
     border-left: 3px solid var(--gold);
   }
+  .explanation.writing-correct {
+    background: color-mix(in srgb, var(--good) 12%, var(--surface));
+    border-left-color: var(--good);
+  }
+
+  /* --- Writing exercises --- */
+  .writing-input {
+    width: 100%;
+    padding: 13px 16px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    background: var(--paper);
+    color: var(--ink);
+    font-size: 1rem;
+    font-family: inherit;
+    resize: vertical;
+    min-height: 60px;
+  }
+  .writing-input:focus-visible { outline: 2px solid var(--teal); outline-offset: 1px; }
+  .writing-input:disabled { opacity: 0.7; }
 
   /* --- Progress --- */
   .stat-row {
@@ -450,6 +470,7 @@
       <a href="#/flashcards" data-route="flashcards">Vocabulario</a>
       <a href="#/grammar" data-route="grammar">Gramática</a>
       <a href="#/rules" data-route="rules">Reglas</a>
+      <a href="#/writing" data-route="writing">Escritura</a>
       <a href="#/progress" data-route="progress">Progreso</a>
     </nav>
     <div class="profile-chip" id="profile-chip" hidden></div>
@@ -897,18 +918,86 @@ const GRAMMAR_RULES = {
   ],
 };
 
+const WRITING = {
+  A1: [
+    { id: "wa1-1", es: "Yo soy estudiante.", answers: ["i am a student", "i'm a student"] },
+    { id: "wa1-2", es: "Ella es feliz.", answers: ["she is happy", "she's happy"] },
+    { id: "wa1-3", es: "Tengo dos hermanos.", answers: ["i have two brothers"] },
+    { id: "wa1-4", es: "¿Te gusta el café?", answers: ["do you like coffee"] },
+    { id: "wa1-5", es: "Hay un libro en la mesa.", answers: ["there is a book on the table"] },
+    { id: "wa1-6", es: "Puedo nadar muy bien.", answers: ["i can swim very well"] },
+    { id: "wa1-7", es: "Estamos jugando fútbol.", answers: ["we are playing football", "we're playing football"] },
+    { id: "wa1-8", es: "Ella no toma café.", answers: ["she doesn't drink coffee"] },
+  ],
+  A2: [
+    { id: "wa2-1", es: "Ayer fui al cine.", answers: ["yesterday i went to the cinema", "i went to the cinema yesterday"] },
+    { id: "wa2-2", es: "Ella estaba viendo televisión cuando llamé.", answers: ["she was watching tv when i called"] },
+    { id: "wa2-3", es: "Él es más alto que su hermano.", answers: ["he is taller than his brother"] },
+    { id: "wa2-4", es: "¿Tienes algo de dinero?", answers: ["do you have any money"] },
+    { id: "wa2-5", es: "Nunca he estado en Japón.", answers: ["i have never been to japan"] },
+    { id: "wa2-6", es: "Ella siempre llega tarde.", answers: ["she always arrives late"] },
+    { id: "wa2-7", es: "Cuando era joven, podía correr muy rápido.", answers: ["when i was young i could run very fast", "when i was young, i could run very fast"] },
+    { id: "wa2-8", es: "No fueron a la fiesta.", answers: ["they didn't go to the party"] },
+  ],
+  B1: [
+    { id: "wb1-1", es: "Si llueve, me quedaré en casa.", answers: ["if it rains i will stay home", "if it rains, i will stay home"] },
+    { id: "wb1-2", es: "Ella ha estado trabajando aquí desde 2019.", answers: ["she has been working here since 2019"] },
+    { id: "wb1-3", es: "Ojalá tuviera más tiempo.", answers: ["i wish i had more time"] },
+    { id: "wb1-4", es: "El informe fue escrito por el gerente.", answers: ["the report was written by the manager"] },
+    { id: "wb1-5", es: "El hombre que te llamó es mi tío.", answers: ["the man who called you is my uncle"] },
+    { id: "wb1-6", es: "Solía tocar el piano de niño.", answers: ["i used to play the piano when i was a child"] },
+    { id: "wb1-7", es: "No debes fumar aquí.", answers: ["you mustn't smoke here"] },
+    { id: "wb1-8", es: "Debo usar uniforme en el trabajo.", answers: ["i have to wear a uniform at work"] },
+  ],
+  B2: [
+    { id: "wb2-1", es: "Si lo hubiera sabido, te habría ayudado.", answers: ["if i had known i would have helped", "if i had known, i would have helped"] },
+    { id: "wb2-2", es: "El edificio será renovado el próximo año.", answers: ["the building will be renovated next year"] },
+    { id: "wb2-3", es: "Necesito que reparen mi carro.", answers: ["i need to have my car repaired", "i need to get my car repaired"] },
+    { id: "wb2-4", es: "Él dijo que me llamaría al día siguiente.", answers: ["he said he would call me the next day"] },
+    { id: "wb2-5", es: "Me encontré con un viejo amigo en el centro comercial.", answers: ["i ran into an old friend at the mall"] },
+    { id: "wb2-6", es: "Para 2030, ella se habrá graduado.", answers: ["by 2030 she will have graduated", "by 2030, she will have graduated"] },
+    { id: "wb2-7", es: "No solo llegó tarde, sino que también olvidó los documentos.", answers: ["not only was he late but he also forgot the documents", "not only was he late, but he also forgot the documents"] },
+    { id: "wb2-8", es: "Ojalá dejara de llover.", answers: ["i wish it would stop raining"] },
+  ],
+  C1: [
+    { id: "wc1-1", es: "Rara vez he visto tanta dedicación.", answers: ["rarely have i seen such dedication"] },
+    { id: "wc1-2", es: "Es esencial que él llegue a tiempo.", answers: ["it's essential that he be on time", "it is essential that he be on time"] },
+    { id: "wc1-3", es: "Sintiéndose cansada, decidió irse a dormir temprano.", answers: ["feeling tired she decided to go to bed early", "feeling tired, she decided to go to bed early"] },
+    { id: "wc1-4", es: "Sí estoy de acuerdo contigo.", answers: ["i do agree with you"] },
+    { id: "wc1-5", es: "Se cree que la economía mejorará.", answers: ["it is believed that the economy will improve"] },
+    { id: "wc1-6", es: "A pesar del retraso, el proyecto se completó con éxito.", answers: ["despite the delay the project was completed successfully", "despite the delay, the project was completed successfully"] },
+    { id: "wc1-7", es: "Ojalá no me interrumpieras todo el tiempo.", answers: ["i wish you wouldn't interrupt me all the time"] },
+    { id: "wc1-8", es: "Apenas había llegado a casa cuando empezó a llover.", answers: ["no sooner had i arrived home than it started to rain"] },
+  ],
+  C2: [
+    { id: "wc2-1", es: "Casi no había comenzado el show cuando se fue la luz.", answers: ["hardly had the show begun when the power went out"] },
+    { id: "wc2-2", es: "El rechazo del comité a la propuesta fue inesperado.", answers: ["the committee's rejection of the proposal was unexpected"] },
+    { id: "wc2-3", es: "La junta insiste en que el informe se entregue el viernes.", answers: ["the board insists that the report be submitted by friday"] },
+    { id: "wc2-4", es: "Tal fue el impacto del discurso que el público se quedó en silencio.", answers: ["such was the impact of the speech that the audience stood in silence"] },
+    { id: "wc2-5", es: "Él dijo que ayudaría, y así lo hizo.", answers: ["he said he'd help and so he did", "he said he would help and so he did"] },
+    { id: "wc2-6", es: "Aunque admiro mucho su trabajo, no estoy de acuerdo con sus métodos.", answers: ["much as i admire her work i disagree with her methods", "much as i admire her work, i disagree with her methods"] },
+    { id: "wc2-7", es: "Se alega que el sospechoso entró al edificio esa noche.", answers: ["the suspect is alleged to have entered the building that night"] },
+    { id: "wc2-8", es: "Si necesita más ayuda, no dude en contactarnos.", answers: ["should you require further assistance do not hesitate to contact us", "should you require further assistance, do not hesitate to contact us"] },
+  ],
+};
+
 const STORAGE_KEY = "fluentup_progress_v1";
 const DAY_MS = 24 * 60 * 60 * 1000;
 
 function loadState() {
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
-    if (raw) return JSON.parse(raw);
+    if (raw) {
+      const parsed = JSON.parse(raw);
+      parsed.writing = parsed.writing || {};
+      return parsed;
+    }
   } catch (e) {}
   return {
     selectedLevel: "A1",
     cards: {},
     grammar: {},
+    writing: {},
     streak: { count: 0, lastDate: null },
   };
 }
@@ -957,6 +1046,7 @@ function mergeRemoteIntoState(data) {
   state.selectedLevel = data.selectedLevel || state.selectedLevel;
   state.cards = data.cards || {};
   state.grammar = data.grammar || {};
+  state.writing = data.writing || {};
   state.streak = data.streak || { count: 0, lastDate: null };
   saveState();
 }
@@ -1188,7 +1278,21 @@ function grammarAccuracy(level) {
   return Math.round((g.correct / g.total) * 100);
 }
 
-const routes = { home: renderHome, flashcards: renderFlashcards, grammar: renderGrammar, rules: renderRules, progress: renderProgress };
+function writingAccuracy(level) {
+  const w = state.writing[level];
+  if (!w || w.total === 0) return null;
+  return Math.round((w.correct / w.total) * 100);
+}
+
+function normalizeText(s) {
+  return s
+    .trim()
+    .toLowerCase()
+    .replace(/[.,!?¿¡"]/g, "")
+    .replace(/\s+/g, " ");
+}
+
+const routes = { home: renderHome, flashcards: renderFlashcards, grammar: renderGrammar, rules: renderRules, writing: renderWriting, progress: renderProgress };
 
 function router() {
   const hash = location.hash.replace("#/", "") || "home";
@@ -1282,6 +1386,7 @@ function renderGate(app) {
           selectedLevel: "A1",
           cards: {},
           grammar: {},
+          writing: {},
           streak: { count: 0, lastDate: null },
         };
         await ref.set(fresh);
@@ -1585,6 +1690,100 @@ function renderRules(app) {
   app.appendChild(wrap);
 }
 
+function renderWriting(app) {
+  const level = state.selectedLevel;
+  const all = WRITING[level] || [];
+  if (!state.writing[level]) state.writing[level] = { correct: 0, total: 0, answered: [] };
+  const w = state.writing[level];
+
+  const unanswered = all.filter((item) => !w.answered.includes(item.id));
+  const queue = unanswered.length > 0 ? unanswered : all;
+
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `<h1>Escritura · ${level}</h1><p class="subtitle">Traduce la oración al inglés y compárala con la respuesta.</p>`;
+
+  if (queue.length === 0) {
+    wrap.innerHTML += `<div class="empty-state">No hay ejercicios para este nivel todavía.</div>`;
+    app.appendChild(wrap);
+    return;
+  }
+
+  let idx = 0;
+  let answered = false;
+
+  const body = document.createElement("div");
+  body.className = "card";
+
+  function draw() {
+    const item = queue[idx];
+    body.innerHTML = `
+      <p class="subtitle" style="margin-bottom:6px;">Oración ${idx + 1} de ${queue.length}</p>
+      <h2>${item.es}</h2>
+      <textarea class="writing-input" id="writing-input" rows="2" placeholder="Escribe tu oración en inglés..."></textarea>
+      <div class="btn-row">
+        <button class="btn" id="writing-check">Revisar</button>
+      </div>
+      <div class="writing-feedback-slot"></div>
+      <div class="btn-row next-slot"></div>
+    `;
+    const input = body.querySelector("#writing-input");
+    const checkBtn = body.querySelector("#writing-check");
+    input.focus();
+
+    function check() {
+      if (answered) return;
+      if (!input.value.trim()) return;
+      answered = true;
+      input.disabled = true;
+      checkBtn.disabled = true;
+
+      const normalized = normalizeText(input.value);
+      const isExact = item.answers.some((a) => normalizeText(a) === normalized);
+
+      if (!w.answered.includes(item.id)) {
+        w.answered.push(item.id);
+        w.total += 1;
+        if (isExact) w.correct += 1;
+        saveState();
+        pushToDb({ writing: { [level]: w } });
+        bumpStreak();
+      }
+
+      const feedbackSlot = body.querySelector(".writing-feedback-slot");
+      feedbackSlot.innerHTML = isExact
+        ? `<div class="explanation writing-correct">✅ ¡Coincide exactamente!</div>`
+        : `<div class="explanation">Así se puede decir: <strong>"${item.answers[0]}"</strong><br>Si tu oración significa lo mismo aunque esté escrita distinto, ¡también puede estar bien! (esta app solo compara texto exacto, no revisa el significado).</div>`;
+
+      const nextSlot = body.querySelector(".next-slot");
+      const nextBtn = document.createElement("button");
+      nextBtn.className = "btn";
+      nextBtn.textContent = idx + 1 < queue.length ? "Siguiente →" : "Terminar";
+      nextBtn.addEventListener("click", () => {
+        idx += 1;
+        answered = false;
+        if (idx >= queue.length) {
+          body.innerHTML = `<div class="empty-state">✅ ¡Completaste ${queue.length} ejercicios de ${level}!</div>`;
+          return;
+        }
+        draw();
+      });
+      nextSlot.appendChild(nextBtn);
+    }
+
+    checkBtn.addEventListener("click", check);
+    input.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" && !e.shiftKey) {
+        e.preventDefault();
+        check();
+      }
+    });
+  }
+
+  draw();
+  wrap.appendChild(body);
+  app.appendChild(wrap);
+}
+
 function renderProgress(app) {
   const totalWords = Object.values(state.cards).filter((c) => c.reps >= 2).length;
   const wrap = document.createElement("div");
@@ -1629,6 +1828,22 @@ function renderProgress(app) {
     gramCard.appendChild(row);
   });
   wrap.appendChild(gramCard);
+
+  const writingCard = document.createElement("div");
+  writingCard.className = "card progress-list";
+  writingCard.innerHTML = `<h2>Precisión en escritura por nivel</h2>`;
+  LEVELS.forEach((lvl) => {
+    const acc = writingAccuracy(lvl);
+    const row = document.createElement("div");
+    row.className = "level-row";
+    row.innerHTML = `
+      <div class="level-tag">${lvl}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${acc === null ? 0 : acc}%"></div></div>
+      <div class="pct">${acc === null ? "—" : acc + "%"}</div>
+    `;
+    writingCard.appendChild(row);
+  });
+  wrap.appendChild(writingCard);
 
   const voiceCard = document.createElement("div");
   voiceCard.className = "card";
