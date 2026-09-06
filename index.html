@@ -1,0 +1,1522 @@
+<meta charset="UTF-8">
+<title>FluentUp</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Fraunces:opsz,wght@9..144,400..900&family=IBM+Plex+Sans:wght@400;500;600;700&family=IBM+Plex+Mono:wght@400;500;600&display=swap">
+<style>
+  :root {
+    --paper: #F5F6F3;
+    --surface: #FFFFFF;
+    --surface-raised: #FFFFFF;
+    --ink: #16231F;
+    --muted: #5B6B66;
+    --line: #DCE1DE;
+    --teal: #0F6E63;
+    --teal-strong: #0B554C;
+    --teal-tint: rgba(15, 110, 99, 0.1);
+    --gold: #B8792A;
+    --gold-tint: rgba(184, 121, 42, 0.12);
+    --good: #1F7A4D;
+    --bad: #B23B3B;
+    --shadow: 0 1px 2px rgba(22, 35, 31, 0.06), 0 8px 24px rgba(22, 35, 31, 0.05);
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper: #0E1614;
+      --surface: #16211E;
+      --surface-raised: #1B2825;
+      --ink: #EAF0EC;
+      --muted: #93A29B;
+      --line: #263631;
+      --teal: #52C2B3;
+      --teal-strong: #78D4C7;
+      --teal-tint: rgba(82, 194, 179, 0.14);
+      --gold: #E0AC55;
+      --gold-tint: rgba(224, 172, 85, 0.16);
+      --good: #4FAE7C;
+      --bad: #E07272;
+      --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 28px rgba(0, 0, 0, 0.35);
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper: #0E1614;
+    --surface: #16211E;
+    --surface-raised: #1B2825;
+    --ink: #EAF0EC;
+    --muted: #93A29B;
+    --line: #263631;
+    --teal: #52C2B3;
+    --teal-strong: #78D4C7;
+    --teal-tint: rgba(82, 194, 179, 0.14);
+    --gold: #E0AC55;
+    --gold-tint: rgba(224, 172, 85, 0.16);
+    --good: #4FAE7C;
+    --bad: #E07272;
+    --shadow: 0 1px 2px rgba(0, 0, 0, 0.3), 0 8px 28px rgba(0, 0, 0, 0.35);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--paper);
+    color: var(--ink);
+    font-family: "IBM Plex Sans", system-ui, sans-serif;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    *, *::before, *::after { animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+  }
+
+  a, button { font-family: inherit; }
+  :focus-visible { outline: 2px solid var(--teal); outline-offset: 2px; }
+
+  .shell { min-height: 100vh; }
+
+  .topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 16px;
+    padding: 16px 28px;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    flex-wrap: wrap;
+  }
+  .brand { display: flex; align-items: center; gap: 10px; }
+  .brand-mark { font-size: 1.4rem; transform: rotate(-6deg); display: inline-block; }
+  .brand-name {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 700;
+    font-size: 1.35rem;
+    letter-spacing: 0.01em;
+  }
+
+  .tabs { display: flex; gap: 4px; flex-wrap: wrap; }
+  .tabs a {
+    text-decoration: none;
+    color: var(--muted);
+    padding: 8px 15px;
+    border-radius: 999px;
+    font-size: 0.88rem;
+    font-weight: 600;
+    transition: background 0.15s, color 0.15s;
+  }
+  .tabs a:hover { background: var(--teal-tint); color: var(--ink); }
+  .tabs a.active { background: var(--teal); color: #fff; }
+
+  #app { max-width: 820px; margin: 0 auto; padding: 40px 24px 72px; }
+
+  h1 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    font-size: 1.9rem;
+    margin: 0 0 6px;
+    text-wrap: balance;
+  }
+  h2 {
+    font-family: "Fraunces", Georgia, serif;
+    font-weight: 600;
+    font-size: 1.25rem;
+    margin: 0 0 16px;
+    text-wrap: balance;
+  }
+  p.subtitle { color: var(--muted); margin: 0 0 28px; max-width: 60ch; line-height: 1.5; }
+
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 16px;
+    padding: 22px;
+    margin-bottom: 18px;
+    box-shadow: var(--shadow);
+  }
+
+  /* --- Level picker: passport-stamp badges --- */
+  .level-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 14px;
+    margin-bottom: 22px;
+  }
+  .level-card {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px 16px;
+    cursor: pointer;
+    text-align: left;
+    transition: border-color 0.15s, transform 0.12s, box-shadow 0.15s;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+  }
+  .level-card:hover { transform: translateY(-2px); box-shadow: var(--shadow); }
+  .level-card.selected { border-color: var(--teal); box-shadow: 0 0 0 1px var(--teal); }
+
+  .stamp {
+    width: 52px; height: 52px;
+    border-radius: 50%;
+    border: 2px dashed var(--teal);
+    display: flex; align-items: center; justify-content: center;
+    transform: rotate(-4deg);
+    flex-shrink: 0;
+  }
+  .stamp span {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 600;
+    font-size: 0.95rem;
+    color: var(--teal);
+    transform: rotate(4deg);
+  }
+
+  .level-name { font-weight: 600; font-size: 0.98rem; }
+  .level-desc { color: var(--muted); font-size: 0.82rem; line-height: 1.4; }
+
+  .level-progress-bar {
+    height: 5px;
+    border-radius: 999px;
+    background: var(--line);
+    overflow: hidden;
+    margin-top: auto;
+  }
+  .level-progress-fill { height: 100%; background: var(--gold); }
+
+  /* --- Buttons --- */
+  .btn {
+    border: none;
+    border-radius: 10px;
+    padding: 11px 18px;
+    font-weight: 600;
+    font-size: 0.92rem;
+    cursor: pointer;
+    background: var(--teal);
+    color: #fff;
+    transition: background 0.15s;
+  }
+  .btn:hover { background: var(--teal-strong); }
+  .btn.secondary {
+    background: var(--gold-tint);
+    color: var(--gold);
+    border: 1px solid transparent;
+  }
+  .btn.secondary:hover { background: var(--gold); color: #fff; }
+  .btn-row { display: flex; gap: 10px; flex-wrap: wrap; margin-top: 18px; }
+
+  /* --- Flashcard: study index card --- */
+  .flash-body { display: flex; flex-direction: column; gap: 16px; }
+  .flashcard {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 18px;
+    padding: 52px 24px;
+    text-align: center;
+    cursor: pointer;
+    min-height: 190px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    user-select: none;
+    box-shadow: var(--shadow);
+    position: relative;
+  }
+  .flashcard::before {
+    content: "";
+    position: absolute;
+    left: 24px; right: 24px; top: 18px;
+    border-top: 1px dashed var(--line);
+  }
+  .flashcard .word {
+    font-family: "Fraunces", Georgia, serif;
+    font-size: 2.1rem;
+    font-weight: 600;
+  }
+  .flashcard .translation { font-size: 1.25rem; color: var(--teal); font-weight: 600; }
+  .flashcard .word-row { display: flex; align-items: center; gap: 10px; }
+  .flashcard .example-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; max-width: 44ch; }
+  .flashcard .example { color: var(--muted); font-size: 0.95rem; }
+  .flashcard .hint { color: var(--muted); font-size: 0.78rem; margin-top: 16px; text-transform: uppercase; letter-spacing: 0.06em; }
+  .speak-btn {
+    flex-shrink: 0;
+    width: 34px; height: 34px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: var(--teal-tint);
+    color: var(--teal);
+    font-size: 1rem;
+    cursor: pointer;
+    display: flex; align-items: center; justify-content: center;
+    transition: background 0.15s, transform 0.1s;
+  }
+  .speak-btn:hover { background: var(--teal); color: #fff; transform: scale(1.06); }
+
+  .voice-list { display: flex; flex-direction: column; gap: 6px; max-height: 320px; overflow-y: auto; }
+  .voice-row {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 9px 12px; border-radius: 8px; background: var(--paper);
+  }
+  .voice-row-active { background: var(--teal-tint); box-shadow: inset 0 0 0 1px var(--teal); }
+  .voice-name { font-size: 0.88rem; font-weight: 600; }
+  .voice-meta { font-size: 0.78rem; color: var(--muted); margin-top: 2px; }
+  .voice-badge {
+    font-size: 0.72rem; font-weight: 700; color: #fff; background: var(--teal);
+    padding: 3px 9px; border-radius: 999px; text-transform: uppercase; letter-spacing: 0.03em;
+    flex-shrink: 0;
+  }
+  .voice-actions { display: flex; align-items: center; gap: 8px; flex-shrink: 0; }
+  .voice-try {
+    width: 30px; height: 30px; border-radius: 50%; border: 1px solid var(--line);
+    background: var(--surface); color: var(--teal); cursor: pointer; font-size: 0.75rem;
+    display: flex; align-items: center; justify-content: center;
+  }
+  .voice-try:hover { background: var(--teal); color: #fff; }
+  .voice-use {
+    border: 1px solid var(--teal); background: transparent; color: var(--teal);
+    font-weight: 600; font-size: 0.78rem; padding: 5px 11px; border-radius: 999px; cursor: pointer;
+  }
+  .voice-use:hover { background: var(--teal); color: #fff; }
+
+  .rating-row { display: grid; grid-template-columns: repeat(4, 1fr); gap: 8px; }
+  .rating-row button {
+    padding: 12px 6px;
+    border-radius: 10px;
+    border: none;
+    font-weight: 600;
+    cursor: pointer;
+    font-size: 0.83rem;
+    color: #fff;
+    transition: filter 0.15s;
+  }
+  .rating-row button:hover { filter: brightness(1.08); }
+  .rate-again { background: var(--bad); }
+  .rate-hard { background: var(--gold); }
+  .rate-good { background: var(--teal); }
+  .rate-easy { background: var(--good); }
+
+  /* --- Grammar quiz --- */
+  .quiz-option {
+    display: block;
+    width: 100%;
+    text-align: left;
+    padding: 13px 16px;
+    margin-bottom: 9px;
+    border-radius: 10px;
+    border: 1px solid var(--line);
+    border-left: 3px solid var(--line);
+    background: var(--surface);
+    color: var(--ink);
+    font-size: 0.98rem;
+    font-family: inherit;
+    cursor: pointer;
+    transition: border-color 0.15s, background 0.15s;
+  }
+  .quiz-option:hover { border-left-color: var(--teal); background: var(--teal-tint); }
+  .quiz-option.correct { border-left-color: var(--good); background: color-mix(in srgb, var(--good) 12%, var(--surface)); }
+  .quiz-option.incorrect { border-left-color: var(--bad); background: color-mix(in srgb, var(--bad) 12%, var(--surface)); }
+
+  .explanation {
+    margin-top: 6px;
+    padding: 13px 15px;
+    border-radius: 10px;
+    background: var(--gold-tint);
+    color: var(--ink);
+    font-size: 0.9rem;
+    line-height: 1.5;
+    border-left: 3px solid var(--gold);
+  }
+
+  /* --- Progress --- */
+  .stat-row {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+    margin-bottom: 22px;
+  }
+  .stat-box {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+    padding: 18px;
+    text-align: center;
+    box-shadow: var(--shadow);
+  }
+  .stat-value {
+    font-family: "IBM Plex Mono", monospace;
+    font-variant-numeric: tabular-nums;
+    font-size: 1.7rem;
+    font-weight: 600;
+    color: var(--teal);
+  }
+  .stat-label { color: var(--muted); font-size: 0.78rem; margin-top: 4px; text-transform: uppercase; letter-spacing: 0.05em; }
+
+  .empty-state {
+    text-align: center;
+    padding: 44px 20px;
+    color: var(--muted);
+    line-height: 1.6;
+  }
+
+  .progress-list .level-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 11px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .progress-list .level-row:last-child { border-bottom: none; }
+  .progress-list .level-tag {
+    font-family: "IBM Plex Mono", monospace;
+    font-weight: 600;
+    color: var(--teal);
+    width: 30px;
+  }
+  .progress-list .bar-track { flex: 1; height: 7px; border-radius: 999px; background: var(--line); overflow: hidden; }
+  .progress-list .bar-fill { height: 100%; background: var(--gold); }
+  .progress-list .pct {
+    width: 46px; text-align: right;
+    color: var(--muted); font-size: 0.85rem;
+    font-family: "IBM Plex Mono", monospace;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* --- Profile chip & gate --- */
+  body.gated .tabs { display: none; }
+  .profile-chip { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--muted); }
+  .profile-chip span { font-weight: 600; color: var(--ink); }
+  .chip-logout {
+    background: none; border: none; color: var(--teal);
+    font-weight: 600; font-size: 0.82rem; cursor: pointer;
+    padding: 4px 8px; border-radius: 6px;
+  }
+  .chip-logout:hover { background: var(--teal-tint); }
+
+  .gate-card { max-width: 420px; }
+  .gate-label {
+    display: block; font-size: 0.8rem; font-weight: 600; color: var(--muted);
+    margin: 14px 0 6px; text-transform: uppercase; letter-spacing: 0.04em;
+  }
+  .gate-label:first-child { margin-top: 0; }
+  .gate-input {
+    width: 100%; padding: 12px 14px; border-radius: 10px;
+    border: 1px solid var(--line); background: var(--paper); color: var(--ink);
+    font-size: 1rem; font-family: inherit;
+  }
+  .gate-input:focus-visible { outline: 2px solid var(--teal); outline-offset: 1px; }
+  .gate-error {
+    margin-top: 14px; padding: 10px 12px; border-radius: 8px;
+    background: color-mix(in srgb, var(--bad) 12%, var(--surface));
+    color: var(--bad); font-size: 0.85rem;
+  }
+</style>
+
+<div class="shell">
+  <header class="topbar">
+    <div class="brand"><span class="brand-mark">🛂</span><span class="brand-name">FluentUp</span></div>
+    <nav class="tabs">
+      <a href="#/home" data-route="home">Inicio</a>
+      <a href="#/flashcards" data-route="flashcards">Vocabulario</a>
+      <a href="#/grammar" data-route="grammar">Gramática</a>
+      <a href="#/progress" data-route="progress">Progreso</a>
+    </nav>
+    <div class="profile-chip" id="profile-chip" hidden></div>
+  </header>
+  <main id="app"></main>
+</div>
+
+<script>
+const LEVELS = ["A1", "A2", "B1", "B2", "C1", "C2"];
+
+const LEVEL_INFO = {
+  A1: { name: "Principiante", desc: "Frases básicas, saludos, presente simple." },
+  A2: { name: "Básico", desc: "Rutinas diarias, pasado simple, vocabulario cotidiano." },
+  B1: { name: "Intermedio", desc: "Opiniones, futuro, experiencias, viajes." },
+  B2: { name: "Intermedio alto", desc: "Argumentación, condicionales, phrasal verbs." },
+  C1: { name: "Avanzado", desc: "Matices, voz pasiva compleja, vocabulario formal." },
+  C2: { name: "Dominio", desc: "Nivel casi nativo, idioms, registros variados." },
+};
+
+const VOCAB = {
+  A1: [
+    { id: "a1-1", en: "hello", es: "hola", example: "Hello, how are you?" },
+    { id: "a1-2", en: "thank you", es: "gracias", example: "Thank you for your help." },
+    { id: "a1-3", en: "house", es: "casa", example: "This is my house." },
+    { id: "a1-4", en: "water", es: "agua", example: "Can I have some water?" },
+    { id: "a1-5", en: "friend", es: "amigo/a", example: "She is my best friend." },
+    { id: "a1-6", en: "to eat", es: "comer", example: "I eat breakfast at 7 am." },
+    { id: "a1-7", en: "today", es: "hoy", example: "Today is Monday." },
+    { id: "a1-8", en: "big", es: "grande", example: "That is a big dog." },
+    { id: "a1-9", en: "school", es: "escuela", example: "I go to school by bus." },
+    { id: "a1-10", en: "to sleep", es: "dormir", example: "I sleep eight hours a night." },
+    { id: "a1-11", en: "happy", es: "feliz", example: "I am happy today." },
+    { id: "a1-12", en: "money", es: "dinero", example: "I need more money." },
+    { id: "a1-13", en: "mother", es: "madre", example: "My mother is a doctor." },
+    { id: "a1-14", en: "father", es: "padre", example: "My father works at a bank." },
+    { id: "a1-15", en: "brother", es: "hermano", example: "I have one brother." },
+    { id: "a1-16", en: "sister", es: "hermana", example: "My sister lives in Lima." },
+    { id: "a1-17", en: "to drink", es: "beber/tomar", example: "I drink coffee every morning." },
+    { id: "a1-18", en: "to work", es: "trabajar", example: "I work in an office." },
+    { id: "a1-19", en: "to study", es: "estudiar", example: "She studies English at night." },
+    { id: "a1-20", en: "book", es: "libro", example: "I am reading a book." },
+    { id: "a1-21", en: "car", es: "carro/auto", example: "He has a new car." },
+    { id: "a1-22", en: "dog", es: "perro", example: "The dog is sleeping." },
+    { id: "a1-23", en: "cat", es: "gato", example: "My cat is very small." },
+    { id: "a1-24", en: "red", es: "rojo", example: "I like the red car." },
+    { id: "a1-25", en: "blue", es: "azul", example: "The sky is blue." },
+    { id: "a1-26", en: "one", es: "uno", example: "I have one sister." },
+    { id: "a1-27", en: "two", es: "dos", example: "There are two apples." },
+    { id: "a1-28", en: "ten", es: "diez", example: "It's ten o'clock." },
+    { id: "a1-29", en: "Monday", es: "lunes", example: "I have class on Monday." },
+    { id: "a1-30", en: "week", es: "semana", example: "I work five days a week." },
+    { id: "a1-31", en: "morning", es: "mañana (parte del día)", example: "I run in the morning." },
+    { id: "a1-32", en: "night", es: "noche", example: "I sleep at night." },
+    { id: "a1-33", en: "to want", es: "querer", example: "I want a coffee, please." },
+    { id: "a1-34", en: "to like", es: "gustar", example: "I like pizza." },
+    { id: "a1-35", en: "to have", es: "tener", example: "I have two brothers." },
+    { id: "a1-36", en: "old", es: "viejo/mayor", example: "My grandfather is old." },
+    { id: "a1-37", en: "new", es: "nuevo", example: "I bought a new phone." },
+    { id: "a1-38", en: "small", es: "pequeño", example: "This room is small." },
+    { id: "a1-39", en: "to open", es: "abrir", example: "Please open the door." },
+    { id: "a1-40", en: "to close", es: "cerrar", example: "Close the window, please." },
+  ],
+  A2: [
+    { id: "a2-1", en: "yesterday", es: "ayer", example: "I went to the park yesterday." },
+    { id: "a2-2", en: "to travel", es: "viajar", example: "We travel every summer." },
+    { id: "a2-3", en: "weather", es: "clima", example: "The weather is cold today." },
+    { id: "a2-4", en: "to remember", es: "recordar", example: "I can't remember his name." },
+    { id: "a2-5", en: "expensive", es: "caro/a", example: "This restaurant is expensive." },
+    { id: "a2-6", en: "to borrow", es: "pedir prestado", example: "Can I borrow your pen?" },
+    { id: "a2-7", en: "neighbor", es: "vecino/a", example: "My neighbor is very friendly." },
+    { id: "a2-8", en: "to arrive", es: "llegar", example: "The train arrives at 6 pm." },
+    { id: "a2-9", en: "healthy", es: "saludable", example: "Vegetables are healthy." },
+    { id: "a2-10", en: "to hurry", es: "apurarse", example: "Hurry up, we're late!" },
+    { id: "a2-11", en: "crowded", es: "concurrido/lleno", example: "The bus was very crowded." },
+    { id: "a2-12", en: "to complain", es: "quejarse", example: "He complained about the food." },
+    { id: "a2-13", en: "to shop", es: "hacer compras", example: "We go shopping on Saturdays." },
+    { id: "a2-14", en: "to cook", es: "cocinar", example: "My mother cooks dinner every night." },
+    { id: "a2-15", en: "to clean", es: "limpiar", example: "I clean my room on Sundays." },
+    { id: "a2-16", en: "to visit", es: "visitar", example: "We visited our grandparents last week." },
+    { id: "a2-17", en: "airport", es: "aeropuerto", example: "The airport is far from here." },
+    { id: "a2-18", en: "ticket", es: "boleto/pasaje", example: "I bought a train ticket." },
+    { id: "a2-19", en: "luggage", es: "equipaje", example: "Don't forget your luggage." },
+    { id: "a2-20", en: "to pack", es: "empacar", example: "I packed my suitcase last night." },
+    { id: "a2-21", en: "to enjoy", es: "disfrutar", example: "We enjoyed the concert a lot." },
+    { id: "a2-22", en: "to feel", es: "sentir(se)", example: "I feel tired today." },
+    { id: "a2-23", en: "excited", es: "emocionado/a", example: "She is excited about the trip." },
+    { id: "a2-24", en: "bored", es: "aburrido/a", example: "He was bored during the meeting." },
+    { id: "a2-25", en: "nervous", es: "nervioso/a", example: "I'm nervous about the exam." },
+    { id: "a2-26", en: "to decide", es: "decidir", example: "We decided to stay home." },
+    { id: "a2-27", en: "to plan", es: "planear", example: "They are planning a trip." },
+    { id: "a2-28", en: "appointment", es: "cita", example: "I have a doctor's appointment." },
+    { id: "a2-29", en: "to fix", es: "arreglar", example: "He fixed my computer." },
+    { id: "a2-30", en: "to lose", es: "perder", example: "I lost my keys." },
+    { id: "a2-31", en: "to find", es: "encontrar", example: "I found my keys under the sofa." },
+    { id: "a2-32", en: "to invite", es: "invitar", example: "She invited me to her party." },
+    { id: "a2-33", en: "to promise", es: "prometer", example: "He promised to call me." },
+    { id: "a2-34", en: "to forget", es: "olvidar", example: "I forgot my umbrella." },
+    { id: "a2-35", en: "to explain", es: "explicar", example: "Can you explain this to me?" },
+    { id: "a2-36", en: "to agree", es: "estar de acuerdo", example: "I agree with you." },
+    { id: "a2-37", en: "to disagree", es: "no estar de acuerdo", example: "I disagree with that idea." },
+    { id: "a2-38", en: "rule", es: "regla", example: "You must follow the rules." },
+    { id: "a2-39", en: "habit", es: "hábito/costumbre", example: "Reading is a good habit." },
+    { id: "a2-40", en: "to notice", es: "notar/darse cuenta", example: "I noticed a small change." },
+  ],
+  B1: [
+    { id: "b1-1", en: "achieve", es: "lograr", example: "She achieved her goal." },
+    { id: "b1-2", en: "opportunity", es: "oportunidad", example: "This is a great opportunity." },
+    { id: "b1-3", en: "to consider", es: "considerar", example: "I'm considering a new job." },
+    { id: "b1-4", en: "to improve", es: "mejorar", example: "My English is improving." },
+    { id: "b1-5", en: "reliable", es: "confiable", example: "He is a reliable worker." },
+    { id: "b1-6", en: "to assume", es: "suponer/asumir", example: "I assumed you knew already." },
+    { id: "b1-7", en: "environment", es: "medio ambiente", example: "We must protect the environment." },
+    { id: "b1-8", en: "to avoid", es: "evitar", example: "Try to avoid junk food." },
+    { id: "b1-9", en: "challenge", es: "desafío", example: "Learning a language is a challenge." },
+    { id: "b1-10", en: "to succeed", es: "tener éxito", example: "She succeeded in her career." },
+    { id: "b1-11", en: "relationship", es: "relación", example: "They have a good relationship." },
+    { id: "b1-12", en: "to complain", es: "quejarse", example: "He complains about everything." },
+    { id: "b1-13", en: "to negotiate", es: "negociar", example: "They negotiated a better price." },
+    { id: "b1-14", en: "to predict", es: "predecir", example: "Nobody could predict the outcome." },
+    { id: "b1-15", en: "evidence", es: "evidencia/prueba", example: "There is no evidence to support this." },
+    { id: "b1-16", en: "to argue", es: "discutir/argumentar", example: "They argued about politics." },
+    { id: "b1-17", en: "to persuade", es: "persuadir", example: "She persuaded him to join the team." },
+    { id: "b1-18", en: "goal", es: "meta/objetivo", example: "My goal is to speak fluent English." },
+    { id: "b1-19", en: "to focus", es: "enfocarse", example: "I need to focus on my studies." },
+    { id: "b1-20", en: "to struggle", es: "luchar/costarle a alguien", example: "He struggles with math." },
+    { id: "b1-21", en: "to manage", es: "manejar/lograr", example: "She manages a small team." },
+    { id: "b1-22", en: "to afford", es: "permitirse (económicamente)", example: "We can't afford a new car." },
+    { id: "b1-23", en: "income", es: "ingreso", example: "His income increased this year." },
+    { id: "b1-24", en: "to invest", es: "invertir", example: "They invested in a new business." },
+    { id: "b1-25", en: "to donate", es: "donar", example: "She donated money to charity." },
+    { id: "b1-26", en: "volunteer", es: "voluntario/a", example: "He works as a volunteer." },
+    { id: "b1-27", en: "to recycle", es: "reciclar", example: "We recycle paper and plastic." },
+    { id: "b1-28", en: "pollution", es: "contaminación", example: "Air pollution is a big problem." },
+    { id: "b1-29", en: "to reduce", es: "reducir", example: "We should reduce our energy use." },
+    { id: "b1-30", en: "resource", es: "recurso", example: "Water is a limited resource." },
+    { id: "b1-31", en: "to require", es: "requerir", example: "This job requires experience." },
+    { id: "b1-32", en: "to recommend", es: "recomendar", example: "I recommend this restaurant." },
+    { id: "b1-33", en: "to describe", es: "describir", example: "Can you describe the man you saw?" },
+    { id: "b1-34", en: "to compare", es: "comparar", example: "Let's compare the two options." },
+    { id: "b1-35", en: "advantage", es: "ventaja", example: "There are many advantages to this plan." },
+    { id: "b1-36", en: "disadvantage", es: "desventaja", example: "Every choice has some disadvantages." },
+    { id: "b1-37", en: "to expect", es: "esperar (una expectativa)", example: "I expect good results." },
+    { id: "b1-38", en: "to admit", es: "admitir", example: "He admitted his mistake." },
+    { id: "b1-39", en: "to deny", es: "negar", example: "She denied the accusation." },
+    { id: "b1-40", en: "attitude", es: "actitud", example: "He has a positive attitude." },
+  ],
+  B2: [
+    { id: "b2-1", en: "to overcome", es: "superar", example: "She overcame many obstacles." },
+    { id: "b2-2", en: "significant", es: "significativo", example: "It was a significant change." },
+    { id: "b2-3", en: "to bring up", es: "mencionar / criar", example: "He brought up an interesting point." },
+    { id: "b2-4", en: "outcome", es: "resultado", example: "The outcome was positive." },
+    { id: "b2-5", en: "to give in", es: "ceder / rendirse", example: "She finally gave in." },
+    { id: "b2-6", en: "controversial", es: "controvertido", example: "It's a controversial topic." },
+    { id: "b2-7", en: "to point out", es: "señalar", example: "He pointed out a mistake." },
+    { id: "b2-8", en: "reluctant", es: "reacio/a", example: "I'm reluctant to agree." },
+    { id: "b2-9", en: "to carry out", es: "llevar a cabo", example: "They carried out the plan." },
+    { id: "b2-10", en: "consequently", es: "en consecuencia", example: "It rained, consequently we stayed home." },
+    { id: "b2-11", en: "to end up", es: "terminar / acabar", example: "We ended up walking home." },
+    { id: "b2-12", en: "thorough", es: "minucioso/a", example: "She did a thorough review." },
+    { id: "b2-13", en: "to tackle", es: "abordar/enfrentar", example: "We need to tackle this issue." },
+    { id: "b2-14", en: "to address", es: "abordar (un tema)", example: "The speech addressed climate change." },
+    { id: "b2-15", en: "insight", es: "percepción/comprensión profunda", example: "The book gives great insight into history." },
+    { id: "b2-16", en: "to imply", es: "implicar/insinuar", example: "Her tone implied she was upset." },
+    { id: "b2-17", en: "assumption", es: "suposición", example: "That's a dangerous assumption." },
+    { id: "b2-18", en: "to justify", es: "justificar", example: "He couldn't justify the expense." },
+    { id: "b2-19", en: "to undermine", es: "socavar", example: "Constant criticism undermined her confidence." },
+    { id: "b2-20", en: "to enhance", es: "mejorar/potenciar", example: "This will enhance our performance." },
+    { id: "b2-21", en: "comprehensive", es: "integral/completo", example: "We need a comprehensive plan." },
+    { id: "b2-22", en: "substantial", es: "considerable/sustancial", example: "There was a substantial increase in sales." },
+    { id: "b2-23", en: "to compensate", es: "compensar", example: "The company compensated the workers." },
+    { id: "b2-24", en: "feasible", es: "viable/factible", example: "Is this plan feasible?" },
+    { id: "b2-25", en: "to comply", es: "cumplir (con normas)", example: "All staff must comply with the rules." },
+    { id: "b2-26", en: "to allocate", es: "asignar", example: "They allocated more funds to research." },
+    { id: "b2-27", en: "to prioritize", es: "priorizar", example: "You need to prioritize your tasks." },
+    { id: "b2-28", en: "to conform", es: "ajustarse/adaptarse a normas", example: "The product must conform to safety standards." },
+    { id: "b2-29", en: "to exceed", es: "exceder/superar", example: "Sales exceeded our expectations." },
+    { id: "b2-30", en: "to withstand", es: "resistir/soportar", example: "The bridge can withstand strong winds." },
+    { id: "b2-31", en: "to cope", es: "sobrellevar/lidiar con", example: "She copes well with stress." },
+    { id: "b2-32", en: "mindset", es: "mentalidad", example: "You need a growth mindset." },
+    { id: "b2-33", en: "to trigger", es: "desencadenar/provocar", example: "The news triggered a strong reaction." },
+    { id: "b2-34", en: "to hinder", es: "obstaculizar", example: "Bad weather hindered our progress." },
+    { id: "b2-35", en: "to foster", es: "fomentar", example: "The program fosters creativity." },
+    { id: "b2-36", en: "versatile", es: "versátil", example: "She is a versatile employee." },
+    { id: "b2-37", en: "to convey", es: "transmitir/expresar", example: "The letter conveyed his gratitude." },
+    { id: "b2-38", en: "to disclose", es: "revelar/divulgar", example: "The company disclosed its profits." },
+    { id: "b2-39", en: "to leverage", es: "aprovechar (recursos)", example: "We should leverage our strengths." },
+    { id: "b2-40", en: "to streamline", es: "optimizar/simplificar", example: "They streamlined the process." },
+  ],
+  C1: [
+    { id: "c1-1", en: "ambiguous", es: "ambiguo", example: "The instructions were ambiguous." },
+    { id: "c1-2", en: "to reconcile", es: "conciliar", example: "It's hard to reconcile both views." },
+    { id: "c1-3", en: "profound", es: "profundo", example: "It had a profound impact." },
+    { id: "c1-4", en: "to undermine", es: "socavar", example: "This undermines our efforts." },
+    { id: "c1-5", en: "discrepancy", es: "discrepancia", example: "There's a discrepancy in the data." },
+    { id: "c1-6", en: "to substantiate", es: "fundamentar/probar", example: "You must substantiate your claim." },
+    { id: "c1-7", en: "notwithstanding", es: "a pesar de", example: "Notwithstanding the risks, they proceeded." },
+    { id: "c1-8", en: "to alleviate", es: "aliviar", example: "This will alleviate the pain." },
+    { id: "c1-9", en: "meticulous", es: "meticuloso", example: "He is meticulous about details." },
+    { id: "c1-10", en: "to circumvent", es: "eludir/evitar", example: "They circumvented the rule." },
+    { id: "c1-11", en: "inherent", es: "inherente", example: "There's an inherent risk in this." },
+    { id: "c1-12", en: "to instigate", es: "instigar", example: "He instigated the argument." },
+    { id: "c1-13", en: "to expedite", es: "acelerar/agilizar", example: "We need to expedite the process." },
+    { id: "c1-14", en: "discretion", es: "discreción/criterio", example: "Use your discretion when deciding." },
+    { id: "c1-15", en: "to entail", es: "implicar/conllevar", example: "The job entails a lot of travel." },
+    { id: "c1-16", en: "nuance", es: "matiz", example: "There's a subtle nuance in meaning." },
+    { id: "c1-17", en: "to disseminate", es: "difundir/diseminar", example: "The report was disseminated widely." },
+    { id: "c1-18", en: "to exacerbate", es: "agravar/exacerbar", example: "The delay exacerbated the problem." },
+    { id: "c1-19", en: "tenuous", es: "tenue/débil", example: "The connection between the two events is tenuous." },
+    { id: "c1-20", en: "to contend", es: "sostener/afirmar (argumentar)", example: "She contends that the theory is flawed." },
+    { id: "c1-21", en: "to relinquish", es: "renunciar a/ceder", example: "He relinquished control of the company." },
+    { id: "c1-22", en: "candid", es: "franco/sincero", example: "She gave a candid opinion." },
+    { id: "c1-23", en: "to permeate", es: "impregnar/penetrar", example: "Fear permeated the room." },
+    { id: "c1-24", en: "stringent", es: "estricto/riguroso", example: "The rules are very stringent." },
+    { id: "c1-25", en: "to galvanize", es: "impulsar/movilizar", example: "The speech galvanized the audience." },
+    { id: "c1-26", en: "latent", es: "latente", example: "There's a latent talent in him." },
+    { id: "c1-27", en: "to deviate", es: "desviarse", example: "Don't deviate from the plan." },
+    { id: "c1-28", en: "plausible", es: "plausible/creíble", example: "That's a plausible explanation." },
+    { id: "c1-29", en: "to invoke", es: "invocar", example: "He invoked his right to remain silent." },
+    { id: "c1-30", en: "austere", es: "austero", example: "They live an austere lifestyle." },
+    { id: "c1-31", en: "to mitigate", es: "mitigar/atenuar", example: "This will mitigate the damage." },
+    { id: "c1-32", en: "discern", es: "discernir", example: "It's hard to discern the truth." },
+    { id: "c1-33", en: "to fathom", es: "comprender/entender (algo difícil)", example: "I can't fathom why he did that." },
+    { id: "c1-34", en: "pertinent", es: "pertinente", example: "That's a pertinent question." },
+    { id: "c1-35", en: "to construe", es: "interpretar", example: "Her silence was construed as agreement." },
+    { id: "c1-36", en: "conducive", es: "propicio/favorable", example: "A quiet room is conducive to studying." },
+    { id: "c1-37", en: "to allude", es: "aludir", example: "He alluded to a previous conversation." },
+    { id: "c1-38", en: "arbitrary", es: "arbitrario", example: "The decision seemed arbitrary." },
+    { id: "c1-39", en: "to subside", es: "disminuir/ceder (tormenta, dolor)", example: "The storm finally subsided." },
+    { id: "c1-40", en: "innocuous", es: "inocuo/inofensivo", example: "It seemed like an innocuous comment." },
+  ],
+  C2: [
+    { id: "c2-1", en: "ubiquitous", es: "ubicuo/omnipresente", example: "Smartphones are ubiquitous nowadays." },
+    { id: "c2-2", en: "to eschew", es: "evitar/rehuir", example: "She eschews unhealthy food." },
+    { id: "c2-3", en: "cogent", es: "convincente", example: "He made a cogent argument." },
+    { id: "c2-4", en: "to placate", es: "aplacar/apaciguar", example: "He tried to placate the crowd." },
+    { id: "c2-5", en: "ephemeral", es: "efímero", example: "Fame can be ephemeral." },
+    { id: "c2-6", en: "to vindicate", es: "vindicar/justificar", example: "The results vindicated his theory." },
+    { id: "c2-7", en: "pragmatic", es: "pragmático", example: "We need a pragmatic approach." },
+    { id: "c2-8", en: "to acquiesce", es: "acceder/consentir", example: "She acquiesced to the demand." },
+    { id: "c2-9", en: "quintessential", es: "por excelencia/típico", example: "It's the quintessential example." },
+    { id: "c2-10", en: "to disparage", es: "menospreciar", example: "He disparaged her efforts." },
+    { id: "c2-11", en: "innate", es: "innato", example: "She has an innate talent." },
+    { id: "c2-12", en: "to corroborate", es: "corroborar", example: "New evidence corroborates the claim." },
+    { id: "c2-13", en: "to obfuscate", es: "ofuscar/oscurecer el sentido", example: "The report seemed designed to obfuscate the facts." },
+    { id: "c2-14", en: "perfunctory", es: "superficial/hecho sin interés", example: "He gave a perfunctory apology." },
+    { id: "c2-15", en: "to countenance", es: "aprobar/tolerar", example: "I will not countenance such behavior." },
+    { id: "c2-16", en: "sanguine", es: "optimista", example: "She remained sanguine about the outcome." },
+    { id: "c2-17", en: "to abrogate", es: "abrogar/anular", example: "The treaty was abrogated last year." },
+    { id: "c2-18", en: "profligate", es: "derrochador/pródigo", example: "His profligate spending caused the crisis." },
+    { id: "c2-19", en: "to inveigle", es: "persuadir con engaños", example: "He inveigled his way into the group." },
+    { id: "c2-20", en: "recalcitrant", es: "recalcitrante/obstinado", example: "The recalcitrant child refused to apologize." },
+    { id: "c2-21", en: "to extol", es: "alabar/ensalzar", example: "Critics extolled the film's originality." },
+    { id: "c2-22", en: "obsequious", es: "servil/adulador", example: "His obsequious manner was off-putting." },
+    { id: "c2-23", en: "to expurgate", es: "expurgar/censurar", example: "Certain passages were expurgated from the book." },
+    { id: "c2-24", en: "ostensible", es: "aparente/supuesto", example: "The ostensible reason was budget cuts." },
+    { id: "c2-25", en: "to castigate", es: "castigar/censurar duramente", example: "The critic castigated the director's choices." },
+    { id: "c2-26", en: "nebulous", es: "nebuloso/vago", example: "His plan was rather nebulous." },
+    { id: "c2-27", en: "to proliferate", es: "proliferar", example: "Fake news has proliferated online." },
+    { id: "c2-28", en: "vindictive", es: "vengativo", example: "He seemed vindictive after losing." },
+    { id: "c2-29", en: "to assuage", es: "aplacar/mitigar", example: "Nothing could assuage her fears." },
+    { id: "c2-30", en: "fastidious", es: "meticuloso/exigente", example: "She is fastidious about cleanliness." },
+    { id: "c2-31", en: "to denigrate", es: "denigrar", example: "He denigrated his rival's achievements." },
+    { id: "c2-32", en: "inexorable", es: "inexorable/implacable", example: "The inexorable rise in prices worried everyone." },
+    { id: "c2-33", en: "to exculpate", es: "exculpar", example: "New evidence exculpated the suspect." },
+    { id: "c2-34", en: "laconic", es: "lacónico/parco en palabras", example: "His laconic reply surprised everyone." },
+    { id: "c2-35", en: "to vituperate", es: "vituperar/injuriar", example: "The critic vituperated the new policy." },
+    { id: "c2-36", en: "sycophantic", es: "adulador/servil", example: "His sycophantic comments annoyed the board." },
+    { id: "c2-37", en: "to abscond", es: "fugarse/huir", example: "The suspect absconded before the trial." },
+    { id: "c2-38", en: "propitious", es: "propicio/favorable", example: "It was not a propitious moment to invest." },
+    { id: "c2-39", en: "to capitulate", es: "capitular/rendirse", example: "The rebels finally capitulated." },
+    { id: "c2-40", en: "equivocal", es: "equívoco/ambiguo", example: "His equivocal answer left us confused." },
+  ],
+};
+
+const GRAMMAR = {
+  A1: [
+    { id: "ga1-1", q: "She ___ a teacher.", options: ["is", "are", "am", "be"], answer: "is", explanation: "'She' usa 'is' con el verbo to be." },
+    { id: "ga1-2", q: "I ___ from Peru.", options: ["is", "am", "are", "be"], answer: "am", explanation: "'I' siempre usa 'am'." },
+    { id: "ga1-3", q: "They ___ students.", options: ["is", "am", "are", "be"], answer: "are", explanation: "Plural / 'they' usa 'are'." },
+    { id: "ga1-4", q: "___ you like coffee?", options: ["Do", "Does", "Is", "Are"], answer: "Do", explanation: "Presente simple con 'you' usa 'Do' para preguntas." },
+    { id: "ga1-5", q: "He ___ to school every day.", options: ["go", "goes", "going", "went"], answer: "goes", explanation: "Tercera persona singular añade 's' en presente simple." },
+    { id: "ga1-6", q: "This is ___ book.", options: ["I", "my", "me", "mine"], answer: "my", explanation: "'my' es adjetivo posesivo antes de un sustantivo." },
+    { id: "ga1-7", q: "___ is your name?", options: ["What", "Who", "Where", "When"], answer: "What", explanation: "'What' pregunta por información, como el nombre." },
+    { id: "ga1-8", q: "There ___ two books on the table.", options: ["is", "are", "be", "am"], answer: "are", explanation: "'books' es plural, así que se usa 'there are'." },
+    { id: "ga1-9", q: "I can ___ swim very well.", options: ["to swim", "swim", "swimming", "swam"], answer: "swim", explanation: "Después de 'can' va el verbo en forma base, sin 'to'." },
+    { id: "ga1-10", q: "I have ___ apple.", options: ["a", "an", "the", "some"], answer: "an", explanation: "Se usa 'an' antes de una palabra que empieza con sonido vocálico." },
+    { id: "ga1-11", q: "We ___ playing football now.", options: ["is", "am", "are", "be"], answer: "are", explanation: "Presente continuo con 'we' usa 'are' + verbo-ing." },
+    { id: "ga1-12", q: "___ she like tea?", options: ["Do", "Does", "Is", "Are"], answer: "Does", explanation: "Con la tercera persona singular (she) se usa 'Does' en preguntas." },
+    { id: "ga1-13", q: "He doesn't ___ coffee.", options: ["like", "likes", "liking", "liked"], answer: "like", explanation: "Después de 'doesn't' el verbo va en forma base, sin 's'." },
+    { id: "ga1-14", q: "Whose book is this? It's ___.", options: ["my", "mine", "I", "me"], answer: "mine", explanation: "'mine' es pronombre posesivo, se usa solo (sin sustantivo después)." },
+    { id: "ga1-15", q: "The children ___ in the garden.", options: ["is", "are", "am", "be"], answer: "are", explanation: "'children' es plural, así que se usa 'are'." },
+    { id: "ga1-16", q: "I ___ hungry right now.", options: ["am", "is", "are", "be"], answer: "am", explanation: "'I' siempre se combina con 'am' del verbo to be." },
+  ],
+  A2: [
+    { id: "ga2-1", q: "Yesterday I ___ to the cinema.", options: ["go", "goes", "went", "going"], answer: "went", explanation: "Pasado simple de 'go' es irregular: 'went'." },
+    { id: "ga2-2", q: "She ___ TV when I called.", options: ["watch", "watched", "was watching", "watches"], answer: "was watching", explanation: "Pasado continuo para una acción en progreso interrumpida." },
+    { id: "ga2-3", q: "There ___ some milk in the fridge.", options: ["is", "are", "be", "am"], answer: "is", explanation: "'milk' es incontable, va con 'is'." },
+    { id: "ga2-4", q: "I have ___ finished my homework.", options: ["already", "yet", "still", "ago"], answer: "already", explanation: "'already' se usa en afirmativas con present perfect." },
+    { id: "ga2-5", q: "He is taller ___ his brother.", options: ["that", "then", "than", "as"], answer: "than", explanation: "Comparativos usan 'than'." },
+    { id: "ga2-6", q: "We are going to ___ a party next week.", options: ["have", "having", "has", "had"], answer: "have", explanation: "'going to' + verbo base para futuro planeado." },
+    { id: "ga2-7", q: "She ___ her homework last night.", options: ["finish", "finished", "finishes", "finishing"], answer: "finished", explanation: "Pasado simple regular: verbo + 'ed'." },
+    { id: "ga2-8", q: "They ___ go to the party.", options: ["didn't", "doesn't", "don't", "not"], answer: "didn't", explanation: "Negativo en pasado simple: didn't + verbo base." },
+    { id: "ga2-9", q: "This is ___ book I've ever read.", options: ["more good", "the best", "the goodest", "best"], answer: "the best", explanation: "Superlativo irregular de 'good' es 'the best'." },
+    { id: "ga2-10", q: "Is there ___ sugar in the kitchen?", options: ["some", "any", "a", "an"], answer: "any", explanation: "En preguntas se usa 'any', no 'some'." },
+    { id: "ga2-11", q: "Would you like ___ tea?", options: ["any", "some", "a", "an"], answer: "some", explanation: "En ofrecimientos se usa 'some', aunque sea pregunta." },
+    { id: "ga2-12", q: "How ___ money do you have?", options: ["many", "much", "a lot", "few"], answer: "much", explanation: "'money' es incontable, se pregunta con 'how much'." },
+    { id: "ga2-13", q: "I ___ never been to Japan.", options: ["have", "has", "am", "was"], answer: "have", explanation: "Present perfect con 'I' usa 'have' + participio." },
+    { id: "ga2-14", q: "She ___ arrives late.", options: ["always", "usual", "much", "very"], answer: "always", explanation: "Adverbio de frecuencia 'always' va antes del verbo principal." },
+    { id: "ga2-15", q: "When I was young, I ___ run very fast.", options: ["can", "could", "will", "was"], answer: "could", explanation: "'could' es la forma pasada de 'can' para habilidad." },
+    { id: "ga2-16", q: "___ do you go to the gym?", options: ["How often", "How much", "How many", "How long"], answer: "How often", explanation: "'How often' pregunta por la frecuencia de una acción." },
+  ],
+  B1: [
+    { id: "gb1-1", q: "If it rains, I ___ stay home.", options: ["will", "would", "was", "did"], answer: "will", explanation: "Primer condicional: if + presente, will + verbo." },
+    { id: "gb1-2", q: "She has been working here ___ 2019.", options: ["for", "since", "during", "ago"], answer: "since", explanation: "'since' se usa con un punto en el tiempo específico." },
+    { id: "gb1-3", q: "I wish I ___ more time.", options: ["have", "had", "has", "having"], answer: "had", explanation: "'wish' + pasado simple expresa deseo sobre el presente." },
+    { id: "gb1-4", q: "The report ___ by the manager yesterday.", options: ["wrote", "was written", "written", "writes"], answer: "was written", explanation: "Voz pasiva en pasado: was/were + participio." },
+    { id: "gb1-5", q: "By the time we arrived, the movie ___ already started.", options: ["has", "had", "have", "was"], answer: "had", explanation: "Past perfect para una acción anterior a otra pasada." },
+    { id: "gb1-6", q: "You ___ smoke here, it's not allowed.", options: ["must", "mustn't", "don't have to", "should"], answer: "mustn't", explanation: "'mustn't' expresa prohibición." },
+    { id: "gb1-7", q: "If I ___ rich, I would travel the world.", options: ["am", "were", "will be", "would be"], answer: "were", explanation: "Segundo condicional: 'if' + pasado simple (se prefiere 'were' para todas las personas en forma más formal)." },
+    { id: "gb1-8", q: "I ___ studying for three hours.", options: ["have been", "has been", "was", "am"], answer: "have been", explanation: "Present perfect continuous: have/has been + verbo-ing." },
+    { id: "gb1-9", q: "He isn't answering; he ___ be asleep.", options: ["must", "can", "should", "would"], answer: "must", explanation: "'must' expresa una deducción lógica fuerte en presente." },
+    { id: "gb1-10", q: "The man ___ called you is my uncle.", options: ["who", "which", "whose", "whom"], answer: "who", explanation: "'who' se refiere a personas en cláusulas relativas." },
+    { id: "gb1-11", q: "This is the book ___ I told you about.", options: ["who", "which", "whose", "whom"], answer: "which", explanation: "'which' se refiere a cosas en cláusulas relativas." },
+    { id: "gb1-12", q: "I ___ to play the piano when I was a child.", options: ["used", "use", "was used", "using"], answer: "used", explanation: "'used to' + verbo base describe un hábito pasado que ya no ocurre." },
+    { id: "gb1-13", q: "I enjoy ___ new places.", options: ["visit", "to visit", "visiting", "visited"], answer: "visiting", explanation: "'enjoy' se sigue de un gerundio (verbo + ing)." },
+    { id: "gb1-14", q: "You like pizza, ___?", options: ["don't you", "do you", "aren't you", "isn't it"], answer: "don't you", explanation: "Question tag: afirmativa + tag negativa correspondiente al verbo auxiliar." },
+    { id: "gb1-15", q: "She said she ___ tired.", options: ["is", "was", "be", "were"], answer: "was", explanation: "En estilo indirecto, el presente ('is') retrocede a pasado ('was')." },
+    { id: "gb1-16", q: "I ___ wear a uniform at work.", options: ["must", "have to", "should", "can"], answer: "have to", explanation: "'have to' expresa una obligación impuesta por una regla externa." },
+  ],
+  B2: [
+    { id: "gb2-1", q: "If I ___ known, I would have helped.", options: ["have", "had", "has", "having"], answer: "had", explanation: "Tercer condicional: if + past perfect, would have + participio." },
+    { id: "gb2-2", q: "She suggested ___ earlier next time.", options: ["to leave", "leaving", "leave", "left"], answer: "leaving", explanation: "'suggest' se sigue de gerundio." },
+    { id: "gb2-3", q: "The building ___ next year.", options: ["will renovate", "will be renovated", "renovates", "renovated"], answer: "will be renovated", explanation: "Futuro en voz pasiva." },
+    { id: "gb2-4", q: "He is used ___ up early.", options: ["to wake", "to waking", "wake", "woke"], answer: "to waking", explanation: "'used to' + gerundio expresa un hábito actual." },
+    { id: "gb2-5", q: "Not only ___ late, but he also forgot the documents.", options: ["he was", "was he", "he is", "is he"], answer: "was he", explanation: "Inversión después de 'Not only' al inicio de la oración." },
+    { id: "gb2-6", q: "This is the man ___ car was stolen.", options: ["who", "which", "whose", "that"], answer: "whose", explanation: "'whose' indica posesión en cláusulas relativas." },
+    { id: "gb2-7", q: "If she had studied harder, she ___ a better job now.", options: ["would have", "would", "will have", "has"], answer: "would", explanation: "Condicional mixto: condición pasada (had studied), resultado en el presente (would + verbo base)." },
+    { id: "gb2-8", q: "She wasn't at the party. She ___ have been busy.", options: ["must", "might", "can't", "should"], answer: "might", explanation: "'might have' expresa una posibilidad o especulación sobre el pasado." },
+    { id: "gb2-9", q: "The problem ___ solved by tomorrow.", options: ["must be", "must", "must have", "being"], answer: "must be", explanation: "Voz pasiva con modal: must + be + participio." },
+    { id: "gb2-10", q: "I wish it ___ raining.", options: ["stops", "stopped", "would stop", "stop"], answer: "would stop", explanation: "'wish' + 'would' expresa fastidio por algo que otro/algo hace y molesta." },
+    { id: "gb2-11", q: "I need to ___ my car repaired.", options: ["have", "do", "make", "get"], answer: "have", explanation: "Estructura causativa: have + objeto + participio (alguien más hace la acción)." },
+    { id: "gb2-12", q: "He said he ___ call me the next day.", options: ["will", "would", "is going to", "can"], answer: "would", explanation: "En estilo indirecto, 'will' cambia a 'would'." },
+    { id: "gb2-13", q: "I ran ___ an old friend at the mall.", options: ["into", "on", "up", "over"], answer: "into", explanation: "'run into' es un phrasal verb que significa encontrarse con alguien por casualidad." },
+    { id: "gb2-14", q: "My brother, ___ lives in Canada, is visiting us.", options: ["that", "who", "which", "whom"], answer: "who", explanation: "Cláusula relativa no restrictiva (con comas) usa 'who' para personas, nunca 'that'." },
+    { id: "gb2-15", q: "By 2030, she ___ graduated from university.", options: ["will have", "will has", "would have", "has"], answer: "will have", explanation: "Futuro perfecto: will have + participio, para una acción completada antes de un momento futuro." },
+    { id: "gb2-16", q: "Never ___ such a beautiful sunset.", options: ["I have seen", "have I seen", "I saw", "did I see"], answer: "have I seen", explanation: "Inversión enfática después de 'Never' al inicio de la oración." },
+  ],
+  C1: [
+    { id: "gc1-1", q: "Had I known the truth, I ___ acted differently.", options: ["would", "would have", "will", "would've had"], answer: "would have", explanation: "Condicional mixto/tercero con inversión: Had + sujeto..., would have + participio." },
+    { id: "gc1-2", q: "It's high time we ___ a decision.", options: ["make", "made", "will make", "making"], answer: "made", explanation: "'it's (high) time' + pasado simple para expresar urgencia." },
+    { id: "gc1-3", q: "Rarely ___ such dedication.", options: ["I have seen", "have I seen", "I saw", "did I saw"], answer: "have I seen", explanation: "Inversión después de adverbios negativos/restrictivos como 'Rarely'." },
+    { id: "gc1-4", q: "The project, ___ was delayed twice, finally launched.", options: ["that", "which", "who", "whose"], answer: "which", explanation: "Cláusula no restrictiva usa 'which', no 'that'." },
+    { id: "gc1-5", q: "She would rather I ___ tomorrow.", options: ["come", "came", "will come", "coming"], answer: "came", explanation: "'would rather' + sujeto + pasado simple para referirse a otra persona." },
+    { id: "gc1-6", q: "The results ___ to be significant.", options: ["proved", "were proved", "proving", "prove"], answer: "proved", explanation: "'prove to be' verbo copulativo, no pasivo aquí." },
+    { id: "gc1-7", q: "No sooner ___ home than it started to rain.", options: ["had I arrived", "I had arrived", "I arrived", "did I arrive"], answer: "had I arrived", explanation: "Inversión con 'No sooner...than' + past perfect." },
+    { id: "gc1-8", q: "___ that worries me the most.", options: ["It is the cost", "The cost is", "Is the cost", "Cost it is"], answer: "It is the cost", explanation: "Oración hendida (cleft sentence) para enfatizar 'the cost'." },
+    { id: "gc1-9", q: "It's essential that he ___ on time.", options: ["is", "be", "was", "being"], answer: "be", explanation: "Subjuntivo tras expresiones como 'it's essential that': verbo base sin conjugar." },
+    { id: "gc1-10", q: "___ tired, she decided to go to bed early.", options: ["Feeling", "Felt", "Feel", "To feel"], answer: "Feeling", explanation: "Cláusula de participio presente para dar razón/causa de forma concisa." },
+    { id: "gc1-11", q: "I ___ do agree with your point.", options: ["really", "do", "so", "very"], answer: "do", explanation: "'do' + verbo base añade énfasis a una afirmación." },
+    { id: "gc1-12", q: "If he weren't so stubborn, he ___ apologized already.", options: ["would have", "would", "will have", "had"], answer: "would have", explanation: "Condicional mixto: condición presente (weren't), resultado pasado (would have + participio)." },
+    { id: "gc1-13", q: "It ___ that the economy will improve.", options: ["is believed", "believes", "is believe", "believing"], answer: "is believed", explanation: "Estructura pasiva de reporte: 'it is believed that...'." },
+    { id: "gc1-14", q: "___ the delay, the project was completed successfully.", options: ["Despite", "Although", "However", "Because"], answer: "Despite", explanation: "'Despite' se usa antes de un sustantivo o gerundio, no antes de una oración completa." },
+    { id: "gc1-15", q: "Tired ___ she was, she kept working.", options: ["as", "that", "so", "than"], answer: "as", explanation: "'Adjetivo + as + sujeto + verbo' es una estructura concesiva formal (aunque estaba cansada)." },
+    { id: "gc1-16", q: "I wish you ___ interrupt me all the time.", options: ["don't", "didn't", "wouldn't", "won't"], answer: "wouldn't", explanation: "'wish' + 'wouldn't' expresa fastidio por un comportamiento repetido de otra persona." },
+  ],
+  C2: [
+    { id: "gc2-1", q: "Were it not for your help, we ___ failed.", options: ["would", "would have", "will have", "had"], answer: "would have", explanation: "Condicional formal con inversión: Were it not for..., would have + participio." },
+    { id: "gc2-2", q: "So absurd ___ the claim that nobody believed it.", options: ["was", "were", "it was", "did"], answer: "was", explanation: "Inversión enfática: 'So + adj + verbo + sujeto'." },
+    { id: "gc2-3", q: "Little ___ that his words would come true.", options: ["he knew", "did he know", "he did know", "knew he"], answer: "did he know", explanation: "Inversión tras 'Little' al inicio de oración." },
+    { id: "gc2-4", q: "She is said ___ the top expert in the field.", options: ["to be", "being", "be", "to being"], answer: "to be", explanation: "Estructura pasiva de reporte: is said + to + infinitivo." },
+    { id: "gc2-5", q: "Scarcely ___ the meeting begun when the fire alarm rang.", options: ["had", "did", "has", "was"], answer: "had", explanation: "Inversión con 'Scarcely...when' + past perfect." },
+    { id: "gc2-6", q: "The committee's decision, controversial ___ it was, stood firm.", options: ["as", "that", "than", "so"], answer: "as", explanation: "'controversial as it was' = estructura concesiva formal (aunque fue...)." },
+    { id: "gc2-7", q: "Hardly ___ the show begun when the power went out.", options: ["had", "did", "has", "was"], answer: "had", explanation: "Inversión con 'Hardly...when' + past perfect." },
+    { id: "gc2-8", q: "Not until she left ___ how much he cared.", options: ["he realized", "did he realize", "he did realize", "realized he"], answer: "did he realize", explanation: "Inversión tras 'Not until' al inicio de la oración." },
+    { id: "gc2-9", q: "The committee's ___ of the proposal was unexpected.", options: ["reject", "rejection", "rejecting", "rejects"], answer: "rejection", explanation: "Registro formal/académico: se usa el sustantivo (nominalización) en vez del verbo." },
+    { id: "gc2-10", q: "The board insists that the report ___ submitted by Friday.", options: ["is", "be", "was", "will be"], answer: "be", explanation: "Subjuntivo formal tras 'insist that': verbo base sin conjugar." },
+    { id: "gc2-11", q: "Such was the impact of the speech ___ the audience stood in silence.", options: ["that", "which", "as", "so"], answer: "that", explanation: "Estructura enfática 'Such...that' para resultado." },
+    { id: "gc2-12", q: "He said he'd help, and so ___.", options: ["did he", "he did", "has he", "he has"], answer: "he did", explanation: "Estructura elíptica de acuerdo: 'and so + sujeto + auxiliar'." },
+    { id: "gc2-13", q: "Much ___ I admire her work, I disagree with her methods.", options: ["as", "though", "that", "so"], answer: "as", explanation: "'Much as' es una estructura concesiva formal que significa 'aunque... mucho'." },
+    { id: "gc2-14", q: "The suspect is alleged ___ the building that night.", options: ["to have entered", "to enter", "having entered", "enter"], answer: "to have entered", explanation: "Pasiva de reporte con infinitivo perfecto para hechos anteriores: 'is alleged to have + participio'." },
+    { id: "gc2-15", q: "Should you require further assistance, ___ hesitate to contact us.", options: ["don't", "do not", "not", "won't"], answer: "do not", explanation: "Registro formal: imperativo negativo formal usa 'do not' en vez de 'don't'." },
+    { id: "gc2-16", q: "Her argument, ___ persuasive, failed to convince the jury.", options: ["while", "despite", "because", "so"], answer: "while", explanation: "'while' puede usarse como conector concesivo formal (aunque fue persuasivo)." },
+  ],
+};
+
+const STORAGE_KEY = "fluentup_progress_v1";
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+function loadState() {
+  try {
+    const raw = localStorage.getItem(STORAGE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return {
+    selectedLevel: "A1",
+    cards: {},
+    grammar: {},
+    streak: { count: 0, lastDate: null },
+  };
+}
+
+let state = loadState();
+
+function saveState() {
+  localStorage.setItem(STORAGE_KEY, JSON.stringify(state));
+}
+
+// ---------- Perfil con sincronización en la nube (capacidad db) ----------
+const PROFILE_KEY = "fluentup_profile_v1";
+let db = null;
+let profile = null; // { slug, name, pin }
+
+function slugify(name) {
+  const stripDiacritics = new RegExp(
+    "[" + String.fromCharCode(0x0300) + "-" + String.fromCharCode(0x036f) + "]",
+    "g"
+  );
+  return name
+    .trim()
+    .toLowerCase()
+    .normalize("NFD")
+    .replace(stripDiacritics, "")
+    .replace(/[^a-z0-9]+/g, "-")
+    .replace(/^-+|-+$/g, "")
+    .slice(0, 60);
+}
+
+function loadLocalProfile() {
+  try {
+    const raw = localStorage.getItem(PROFILE_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return null;
+}
+function saveLocalProfile(p) {
+  localStorage.setItem(PROFILE_KEY, JSON.stringify(p));
+}
+function clearLocalProfile() {
+  localStorage.removeItem(PROFILE_KEY);
+}
+
+function mergeRemoteIntoState(data) {
+  state.selectedLevel = data.selectedLevel || state.selectedLevel;
+  state.cards = data.cards || {};
+  state.grammar = data.grammar || {};
+  state.streak = data.streak || { count: 0, lastDate: null };
+  saveState();
+}
+
+function pushToDb(patch) {
+  if (!db || !profile) return;
+  db.doc(`profiles/${profile.slug}`).update(patch).catch(() => {});
+}
+
+// ---------- Pronunciación (Web Speech API) ----------
+// La calidad de la voz depende 100% de lo que el navegador/sistema
+// operativo de quien la escucha tenga instalado — no existe forma de
+// llamar a un servicio de voz neuronal de pago (ElevenLabs, Google Cloud,
+// etc.) desde un Artifact. Lo máximo que podemos hacer es: esperar a que
+// el navegador termine de cargar su lista de voces (se carga async y a
+// veces llega tarde) y elegir la mejor disponible, evitando a propósito
+// las voces "de escritorio" clásicas (David/Zira) que suenan más robóticas.
+let cachedVoices = [];
+function refreshVoices() {
+  if ("speechSynthesis" in window) cachedVoices = window.speechSynthesis.getVoices();
+}
+function voicesReady() {
+  return new Promise((resolve) => {
+    refreshVoices();
+    if (cachedVoices.length) return resolve();
+    let done = false;
+    const finish = () => {
+      if (done) return;
+      done = true;
+      refreshVoices();
+      resolve();
+    };
+    if ("speechSynthesis" in window) {
+      window.speechSynthesis.onvoiceschanged = finish;
+    }
+    setTimeout(finish, 800);
+  });
+}
+if ("speechSynthesis" in window) voicesReady();
+
+function pickBestEnglishVoice() {
+  const enVoices = cachedVoices.filter((v) => v.lang && v.lang.toLowerCase().startsWith("en"));
+  if (!enVoices.length) return null;
+  const scored = enVoices.map((v) => {
+    let score = 0;
+    if (/neural|natural/i.test(v.name)) score += 6;
+    if (/online/i.test(v.name)) score += 3;
+    if (/google/i.test(v.name)) score += 3;
+    if (/samantha|ava|allison|susan|zoe|nicky/i.test(v.name)) score += 3; // voces "enhanced" de Apple
+    if (/desktop|david|zira|mark/i.test(v.name)) score -= 4; // SAPI5 clásicas, muy robóticas
+    if (!v.localService) score += 2;
+    if (/^en-US$/i.test(v.lang)) score += 1;
+    return { v, score };
+  });
+  scored.sort((a, b) => b.score - a.score);
+  return scored[0].v;
+}
+
+// ---------- Preferencia manual de voz (elegida por la persona) ----------
+const VOICE_PREF_KEY = "fluentup_voice_pref";
+function loadVoicePref() {
+  try {
+    const raw = localStorage.getItem(VOICE_PREF_KEY);
+    if (raw) return JSON.parse(raw);
+  } catch (e) {}
+  return null;
+}
+function saveVoicePref(v) {
+  localStorage.setItem(VOICE_PREF_KEY, JSON.stringify({ name: v.name, lang: v.lang }));
+}
+function clearVoicePref() {
+  localStorage.removeItem(VOICE_PREF_KEY);
+}
+
+function getSelectedVoice() {
+  const pref = loadVoicePref();
+  if (pref) {
+    const match = cachedVoices.find((v) => v.name === pref.name && v.lang === pref.lang);
+    if (match) return match;
+  }
+  return pickBestEnglishVoice();
+}
+
+function speakWithVoice(text, voice, rate) {
+  if (!("speechSynthesis" in window)) return;
+  window.speechSynthesis.cancel();
+  const utter = new SpeechSynthesisUtterance(text);
+  if (voice) {
+    utter.voice = voice;
+    utter.lang = voice.lang;
+  } else {
+    utter.lang = "en-US";
+  }
+  utter.rate = rate || 0.95;
+  utter.pitch = 1;
+  window.speechSynthesis.speak(utter);
+}
+
+async function renderVoiceList(container) {
+  if (!("speechSynthesis" in window)) {
+    container.textContent = "Tu navegador no soporta lectura en voz alta (Web Speech API).";
+    return;
+  }
+  await voicesReady();
+  if (!cachedVoices.length) {
+    container.textContent = "Tu navegador no reporta ninguna voz instalada.";
+    return;
+  }
+  const selected = getSelectedVoice();
+  const hasManualPref = !!loadVoicePref();
+  const sorted = [...cachedVoices].sort((a, b) => {
+    const aEn = a.lang.toLowerCase().startsWith("en") ? 0 : 1;
+    const bEn = b.lang.toLowerCase().startsWith("en") ? 0 : 1;
+    if (aEn !== bEn) return aEn - bEn;
+    return a.name.localeCompare(b.name);
+  });
+
+  const resetHtml = hasManualPref
+    ? `<button class="btn secondary voice-reset" id="voice-reset" style="margin-bottom:12px;">Volver a elegir automáticamente</button>`
+    : "";
+
+  container.innerHTML =
+    resetHtml +
+    sorted
+      .map((v, i) => {
+        const isEnglish = v.lang.toLowerCase().startsWith("en");
+        const isSelected = selected && v.name === selected.name && v.lang === selected.lang;
+        return `
+          <div class="voice-row${isSelected ? " voice-row-active" : ""}">
+            <div>
+              <div class="voice-name">${v.name}</div>
+              <div class="voice-meta">${v.lang} · ${v.localService ? "local" : "en línea"}</div>
+            </div>
+            <div class="voice-actions">
+              ${isSelected ? '<span class="voice-badge">En uso</span>' : ""}
+              ${isEnglish ? `<button class="voice-try" data-idx="${i}" title="Escuchar esta voz">▶</button>` : ""}
+              ${isEnglish && !isSelected ? `<button class="voice-use" data-idx="${i}">Usar</button>` : ""}
+            </div>
+          </div>
+        `;
+      })
+      .join("");
+
+  container.querySelectorAll(".voice-try").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const v = sorted[parseInt(btn.dataset.idx, 10)];
+      speakWithVoice("Hello! This is how I sound reading your English examples.", v);
+    });
+  });
+  container.querySelectorAll(".voice-use").forEach((btn) => {
+    btn.addEventListener("click", () => {
+      const v = sorted[parseInt(btn.dataset.idx, 10)];
+      saveVoicePref(v);
+      renderVoiceList(container);
+    });
+  });
+  const resetBtn = container.querySelector("#voice-reset");
+  if (resetBtn) {
+    resetBtn.addEventListener("click", () => {
+      clearVoicePref();
+      renderVoiceList(container);
+    });
+  }
+}
+
+async function speakEnglish(text, rate) {
+  if (!("speechSynthesis" in window)) return;
+  await voicesReady();
+  speakWithVoice(text, getSelectedVoice(), rate);
+}
+
+function todayStr() {
+  return new Date().toISOString().slice(0, 10);
+}
+
+function bumpStreak() {
+  const today = todayStr();
+  if (state.streak.lastDate === today) return;
+  const yesterday = new Date(Date.now() - DAY_MS).toISOString().slice(0, 10);
+  if (state.streak.lastDate === yesterday) {
+    state.streak.count += 1;
+  } else {
+    state.streak.count = 1;
+  }
+  state.streak.lastDate = today;
+  saveState();
+  pushToDb({ streak: state.streak });
+}
+
+function reviewCard(id, quality) {
+  let c = state.cards[id] || { ef: 2.5, interval: 0, reps: 0, due: Date.now() };
+  if (quality < 3) {
+    c.reps = 0;
+    c.interval = 1;
+  } else {
+    if (c.reps === 0) c.interval = 1;
+    else if (c.reps === 1) c.interval = 6;
+    else c.interval = Math.round(c.interval * c.ef);
+    c.reps += 1;
+  }
+  c.ef = Math.max(1.3, c.ef + (0.1 - (5 - quality) * (0.08 + (5 - quality) * 0.02)));
+  c.due = Date.now() + c.interval * DAY_MS;
+  state.cards[id] = c;
+  saveState();
+  pushToDb({ cards: { [id]: c } });
+}
+
+function getDueCards(level) {
+  const all = VOCAB[level] || [];
+  const now = Date.now();
+  const due = all.filter((w) => {
+    const c = state.cards[w.id];
+    return c && c.due <= now;
+  });
+  const fresh = all.filter((w) => !state.cards[w.id]);
+  return due.concat(fresh);
+}
+
+function levelMastery(level) {
+  const all = VOCAB[level] || [];
+  if (all.length === 0) return 0;
+  const learned = all.filter((w) => state.cards[w.id] && state.cards[w.id].reps >= 2).length;
+  return Math.round((learned / all.length) * 100);
+}
+
+function grammarAccuracy(level) {
+  const g = state.grammar[level];
+  if (!g || g.total === 0) return null;
+  return Math.round((g.correct / g.total) * 100);
+}
+
+const routes = { home: renderHome, flashcards: renderFlashcards, grammar: renderGrammar, progress: renderProgress };
+
+function router() {
+  const hash = location.hash.replace("#/", "") || "home";
+  const route = routes[hash] ? hash : "home";
+  document.querySelectorAll(".tabs a").forEach((a) => {
+    a.classList.toggle("active", a.dataset.route === route);
+  });
+  const app = document.getElementById("app");
+  app.innerHTML = "";
+  renderProfileChip();
+
+  if (db && !profile) {
+    document.body.classList.add("gated");
+    renderGate(app);
+    return;
+  }
+  document.body.classList.remove("gated");
+  routes[route](app);
+}
+
+function renderProfileChip() {
+  const chip = document.getElementById("profile-chip");
+  if (!chip) return;
+  if (profile) {
+    chip.hidden = false;
+    chip.innerHTML = `<span>👤 ${profile.name}</span><button class="chip-logout" id="logout-btn">Cambiar</button>`;
+    chip.querySelector("#logout-btn").addEventListener("click", () => {
+      clearLocalProfile();
+      profile = null;
+      router();
+    });
+  } else {
+    chip.hidden = true;
+  }
+}
+
+function renderGate(app) {
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `
+    <h1>¿Quién eres? 👋</h1>
+    <p class="subtitle">Escribe tu nombre y un PIN de 4 dígitos. Si ya tenías un perfil, úsalos para recuperar tu progreso desde cualquier dispositivo.</p>
+    <div class="card gate-card">
+      <label class="gate-label" for="gate-name">Nombre</label>
+      <input type="text" id="gate-name" class="gate-input" placeholder="Ej: Daniel" autocomplete="name">
+      <label class="gate-label" for="gate-pin">PIN (4 dígitos)</label>
+      <input type="password" id="gate-pin" class="gate-input" placeholder="••••" inputmode="numeric" maxlength="4" autocomplete="off">
+      <div class="gate-error" id="gate-error" hidden></div>
+      <div class="btn-row">
+        <button class="btn" id="gate-submit">Entrar</button>
+      </div>
+    </div>
+  `;
+  app.appendChild(wrap);
+
+  const nameInput = wrap.querySelector("#gate-name");
+  const pinInput = wrap.querySelector("#gate-pin");
+  const errorBox = wrap.querySelector("#gate-error");
+  const submitBtn = wrap.querySelector("#gate-submit");
+
+  function showError(msg) {
+    errorBox.textContent = msg;
+    errorBox.hidden = false;
+  }
+
+  async function submit() {
+    const name = nameInput.value.trim();
+    const pin = pinInput.value.trim();
+    errorBox.hidden = true;
+    if (!name) return showError("Escribe tu nombre.");
+    const slug = slugify(name);
+    if (!slug) return showError("Ese nombre no es válido, usa letras o números.");
+    if (!/^\d{4}$/.test(pin)) return showError("El PIN debe tener 4 dígitos.");
+
+    submitBtn.disabled = true;
+    submitBtn.textContent = "Entrando...";
+    try {
+      const ref = db.doc(`profiles/${slug}`);
+      const snap = await ref.get();
+      if (snap.exists) {
+        if (snap.data().pin !== pin) {
+          showError("Ese nombre ya está en uso con otro PIN. Prueba otro nombre o revisa tu PIN.");
+          submitBtn.disabled = false;
+          submitBtn.textContent = "Entrar";
+          return;
+        }
+        mergeRemoteIntoState(snap.data());
+      } else {
+        const fresh = {
+          name,
+          pin,
+          selectedLevel: "A1",
+          cards: {},
+          grammar: {},
+          streak: { count: 0, lastDate: null },
+        };
+        await ref.set(fresh);
+        mergeRemoteIntoState(fresh);
+      }
+      profile = { slug, name, pin };
+      saveLocalProfile(profile);
+      router();
+    } catch (e) {
+      showError("No se pudo conectar. Intenta de nuevo.");
+      submitBtn.disabled = false;
+      submitBtn.textContent = "Entrar";
+    }
+  }
+
+  submitBtn.addEventListener("click", submit);
+  pinInput.addEventListener("keydown", (e) => {
+    if (e.key === "Enter") submit();
+  });
+}
+
+(async function boot() {
+  try {
+    db = await claude.use("db");
+  } catch (e) {
+    db = null;
+  }
+
+  const saved = loadLocalProfile();
+  if (db && saved) {
+    try {
+      const snap = await db.doc(`profiles/${saved.slug}`).get();
+      if (snap.exists && snap.data().pin === saved.pin) {
+        profile = saved;
+        mergeRemoteIntoState(snap.data());
+      } else {
+        clearLocalProfile();
+      }
+    } catch (e) {
+      profile = saved; // sin conexión: confiar en la copia local por ahora
+    }
+  }
+
+  window.addEventListener("hashchange", router);
+  router();
+})();
+
+function renderHome(app) {
+  const div = document.createElement("div");
+  div.innerHTML = `
+    <h1>¡Hola! 👋</h1>
+    <p class="subtitle">Elige tu nivel actual para practicar vocabulario y gramática a tu medida.</p>
+  `;
+
+  const grid = document.createElement("div");
+  grid.className = "level-grid";
+  LEVELS.forEach((lvl) => {
+    const info = LEVEL_INFO[lvl];
+    const mastery = levelMastery(lvl);
+    const card = document.createElement("div");
+    card.className = "level-card" + (state.selectedLevel === lvl ? " selected" : "");
+    card.innerHTML = `
+      <div class="stamp"><span>${lvl}</span></div>
+      <div class="level-name">${info.name}</div>
+      <div class="level-desc">${info.desc}</div>
+      <div class="level-progress-bar"><div class="level-progress-fill" style="width:${mastery}%"></div></div>
+    `;
+    card.addEventListener("click", () => {
+      state.selectedLevel = lvl;
+      saveState();
+      pushToDb({ selectedLevel: lvl });
+      router();
+    });
+    grid.appendChild(card);
+  });
+  div.appendChild(grid);
+
+  const cta = document.createElement("div");
+  cta.className = "card";
+  cta.innerHTML = `
+    <h2>Nivel seleccionado: ${state.selectedLevel}</h2>
+    <p class="subtitle" style="margin-bottom:0;">Practica un poco cada día para avanzar más rápido.</p>
+    <div class="btn-row">
+      <button class="btn" id="go-flash">📇 Practicar vocabulario</button>
+      <button class="btn secondary" id="go-gram">✍️ Practicar gramática</button>
+    </div>
+  `;
+  div.appendChild(cta);
+  app.appendChild(div);
+
+  cta.querySelector("#go-flash").addEventListener("click", () => (location.hash = "#/flashcards"));
+  cta.querySelector("#go-gram").addEventListener("click", () => (location.hash = "#/grammar"));
+}
+
+function renderFlashcards(app) {
+  const level = state.selectedLevel;
+  const queue = getDueCards(level);
+
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `<h1>Vocabulario · ${level}</h1><p class="subtitle">Toca la tarjeta para ver la traducción.</p>`;
+
+  if (queue.length === 0) {
+    wrap.innerHTML += `<div class="empty-state">🎉 No hay tarjetas pendientes por ahora en este nivel.<br>Vuelve más tarde o cambia de nivel en Inicio.</div>`;
+    app.appendChild(wrap);
+    return;
+  }
+
+  let idx = 0;
+  let revealed = false;
+
+  const cardEl = document.createElement("div");
+  cardEl.className = "flashcard";
+
+  const ratingEl = document.createElement("div");
+  ratingEl.className = "rating-row";
+  ratingEl.style.display = "none";
+  ratingEl.innerHTML = `
+    <button class="rate-again" data-q="1">Otra vez</button>
+    <button class="rate-hard" data-q="3">Difícil</button>
+    <button class="rate-good" data-q="4">Bien</button>
+    <button class="rate-easy" data-q="5">Fácil</button>
+  `;
+
+  const progressLabel = document.createElement("p");
+  progressLabel.className = "subtitle";
+  progressLabel.style.marginBottom = "0";
+
+  function draw() {
+    const word = queue[idx];
+    progressLabel.textContent = `Tarjeta ${idx + 1} de ${queue.length}`;
+    if (!revealed) {
+      cardEl.innerHTML = `<div class="word">${word.en}</div><div class="hint">Toca para revelar</div>`;
+      ratingEl.style.display = "none";
+    } else {
+      cardEl.innerHTML = `
+        <div class="word-row">
+          <div class="word">${word.en}</div>
+          <button class="speak-btn" id="speak-word-btn" title="Escuchar solo la palabra" aria-label="Escuchar solo la palabra">🔊</button>
+        </div>
+        <div class="translation">${word.es}</div>
+        <div class="example-row">
+          <div class="example">"${word.example}"</div>
+          <button class="speak-btn" id="speak-example-btn" title="Escuchar la oración" aria-label="Escuchar la oración">🔊</button>
+        </div>
+      `;
+      ratingEl.style.display = "grid";
+      cardEl.querySelector("#speak-word-btn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        speakEnglish(word.en, 0.65);
+      });
+      cardEl.querySelector("#speak-example-btn").addEventListener("click", (e) => {
+        e.stopPropagation();
+        speakEnglish(word.example, 0.65);
+      });
+    }
+  }
+
+  cardEl.addEventListener("click", () => {
+    if (!revealed) {
+      revealed = true;
+      draw();
+      speakEnglish(queue[idx].en, 0.65);
+    }
+  });
+
+  ratingEl.querySelectorAll("button").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      e.stopPropagation();
+      const q = parseInt(btn.dataset.q, 10);
+      reviewCard(queue[idx].id, q);
+      bumpStreak();
+      idx += 1;
+      revealed = false;
+      if (idx >= queue.length) {
+        wrap.querySelector(".flash-body").innerHTML = `<div class="empty-state">✅ ¡Terminaste esta sesión de ${queue.length} tarjetas!</div>`;
+        return;
+      }
+      draw();
+    });
+  });
+
+  const body = document.createElement("div");
+  body.className = "flash-body";
+  body.appendChild(progressLabel);
+  body.appendChild(cardEl);
+  body.appendChild(ratingEl);
+  wrap.appendChild(body);
+  app.appendChild(wrap);
+  draw();
+}
+
+function renderGrammar(app) {
+  const level = state.selectedLevel;
+  const all = GRAMMAR[level] || [];
+  if (!state.grammar[level]) state.grammar[level] = { correct: 0, total: 0, answered: [] };
+  const g = state.grammar[level];
+
+  const unanswered = all.filter((q) => !g.answered.includes(q.id));
+  const queue = unanswered.length > 0 ? unanswered : all;
+
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `<h1>Gramática · ${level}</h1><p class="subtitle">Elige la opción correcta.</p>`;
+
+  if (queue.length === 0) {
+    wrap.innerHTML += `<div class="empty-state">No hay preguntas para este nivel todavía.</div>`;
+    app.appendChild(wrap);
+    return;
+  }
+
+  let idx = 0;
+  let answered = false;
+
+  const body = document.createElement("div");
+  body.className = "card";
+
+  function draw() {
+    const item = queue[idx];
+    body.innerHTML = `
+      <p class="subtitle" style="margin-bottom:6px;">Pregunta ${idx + 1} de ${queue.length}</p>
+      <h2>${item.q}</h2>
+      <div class="options"></div>
+      <div class="explanation-slot"></div>
+      <div class="btn-row next-slot"></div>
+    `;
+    const optionsDiv = body.querySelector(".options");
+    item.options.forEach((opt) => {
+      const b = document.createElement("button");
+      b.className = "quiz-option";
+      b.textContent = opt;
+      b.addEventListener("click", () => {
+        if (answered) return;
+        answered = true;
+        const isCorrect = opt === item.answer;
+        b.classList.add(isCorrect ? "correct" : "incorrect");
+        if (!isCorrect) {
+          [...optionsDiv.children].forEach((c) => {
+            if (c.textContent === item.answer) c.classList.add("correct");
+          });
+        }
+        if (!g.answered.includes(item.id)) {
+          g.answered.push(item.id);
+          g.total += 1;
+          if (isCorrect) g.correct += 1;
+          saveState();
+          pushToDb({ grammar: { [level]: g } });
+          bumpStreak();
+        }
+        body.querySelector(".explanation-slot").innerHTML = `<div class="explanation">💡 ${item.explanation}</div>`;
+        const nextSlot = body.querySelector(".next-slot");
+        const nextBtn = document.createElement("button");
+        nextBtn.className = "btn";
+        nextBtn.textContent = idx + 1 < queue.length ? "Siguiente →" : "Terminar";
+        nextBtn.addEventListener("click", () => {
+          idx += 1;
+          answered = false;
+          if (idx >= queue.length) {
+            body.innerHTML = `<div class="empty-state">✅ ¡Completaste ${queue.length} preguntas de ${level}!</div>`;
+            return;
+          }
+          draw();
+        });
+        nextSlot.appendChild(nextBtn);
+      });
+      optionsDiv.appendChild(b);
+    });
+  }
+
+  draw();
+  wrap.appendChild(body);
+  app.appendChild(wrap);
+}
+
+function renderProgress(app) {
+  const totalWords = Object.values(state.cards).filter((c) => c.reps >= 2).length;
+  const wrap = document.createElement("div");
+  wrap.innerHTML = `<h1>Tu progreso</h1><p class="subtitle">Sigue practicando un poco cada día.</p>`;
+
+  const stats = document.createElement("div");
+  stats.className = "stat-row";
+  stats.innerHTML = `
+    <div class="stat-box"><div class="stat-value">${state.streak.count}</div><div class="stat-label">Días seguidos</div></div>
+    <div class="stat-box"><div class="stat-value">${totalWords}</div><div class="stat-label">Palabras aprendidas</div></div>
+  `;
+  wrap.appendChild(stats);
+
+  const listCard = document.createElement("div");
+  listCard.className = "card progress-list";
+  listCard.innerHTML = `<h2>Dominio de vocabulario por nivel</h2>`;
+  LEVELS.forEach((lvl) => {
+    const pct = levelMastery(lvl);
+    const row = document.createElement("div");
+    row.className = "level-row";
+    row.innerHTML = `
+      <div class="level-tag">${lvl}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${pct}%"></div></div>
+      <div class="pct">${pct}%</div>
+    `;
+    listCard.appendChild(row);
+  });
+  wrap.appendChild(listCard);
+
+  const gramCard = document.createElement("div");
+  gramCard.className = "card progress-list";
+  gramCard.innerHTML = `<h2>Precisión en gramática por nivel</h2>`;
+  LEVELS.forEach((lvl) => {
+    const acc = grammarAccuracy(lvl);
+    const row = document.createElement("div");
+    row.className = "level-row";
+    row.innerHTML = `
+      <div class="level-tag">${lvl}</div>
+      <div class="bar-track"><div class="bar-fill" style="width:${acc === null ? 0 : acc}%"></div></div>
+      <div class="pct">${acc === null ? "—" : acc + "%"}</div>
+    `;
+    gramCard.appendChild(row);
+  });
+  wrap.appendChild(gramCard);
+
+  const voiceCard = document.createElement("div");
+  voiceCard.className = "card";
+  voiceCard.innerHTML = `
+    <h2>🔊 Voces de tu navegador</h2>
+    <p class="subtitle" style="margin-bottom:12px;">Esta es la lista de voces que tu navegador tiene instaladas ahora mismo. La marcada como "En uso" es la que FluentUp elige para leer los ejemplos.</p>
+    <div id="voice-list" class="voice-list">Buscando voces...</div>
+  `;
+  wrap.appendChild(voiceCard);
+
+  app.appendChild(wrap);
+  renderVoiceList(voiceCard.querySelector("#voice-list"));
+}
+</script>
